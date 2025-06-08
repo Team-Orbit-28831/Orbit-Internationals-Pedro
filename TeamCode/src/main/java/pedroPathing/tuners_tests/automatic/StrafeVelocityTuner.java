@@ -86,6 +86,7 @@ Constants.setConstants(FConstants.class, LConstants.class);
         rightRear.setDirection(rightRearMotorDirection);
 
         motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
+        //sui sui sui sui
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
