@@ -26,7 +26,7 @@ import pedroPathing.constants.LConstants;
  */
 
 @Autonomous(name = "Example Auto Blue", group = "Examples")
-public class ExampleBucketAuto extends OpMode {
+public class Autonomous_example extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
