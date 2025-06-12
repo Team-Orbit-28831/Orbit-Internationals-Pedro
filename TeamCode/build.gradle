@@ -15,6 +15,7 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
@@ -41,6 +42,7 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok:1.18.30'
     implementation 'org.ftclib.ftclib:vision:2.1.0' // vision
+
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     implementation files("lib/wpimath-java 2024.3.2.jar")
