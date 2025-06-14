@@ -3,16 +3,16 @@ package pedroPathing.TeleOP;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import pedroPathing.SUBSYSTEMS.CascadePivot;
-import pedroPathing.SUBSYSTEMS.Claw_OLD;
+import pedroPathing.SUBSYSTEMS.OLD_Claw;
 import pedroPathing.SUBSYSTEMS.Drivetrain;
-import pedroPathing.SUBSYSTEMS.CascadeSlides_OLD;
+import pedroPathing.SUBSYSTEMS.OLD_CascadeSlides;
 
 @TeleOp(name = "Orbit TeleOp", group = "Linear OpMode")
 public class BasicTeleOp extends LinearOpMode {
     private Drivetrain drivetrain;
-    private CascadeSlides_OLD cascadeSlides;
+    private OLD_CascadeSlides cascadeSlides;
     private CascadePivot slidePivot;
-    private Claw_OLD claw;
+    private OLD_Claw claw;
 
     private static final int POSITION0 = 0;
     private static final int POSITION1 = 1865; // Adjusted for safer movement
@@ -24,9 +24,9 @@ public class BasicTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         drivetrain = new Drivetrain();
-        cascadeSlides = new CascadeSlides_OLD();
+        cascadeSlides = new OLD_CascadeSlides();
         slidePivot = new CascadePivot();
-        claw = new Claw_OLD();
+        claw = new OLD_Claw();
 
         drivetrain.init(hardwareMap);
         cascadeSlides.init(hardwareMap);

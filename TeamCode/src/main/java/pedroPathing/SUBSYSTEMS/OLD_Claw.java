@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Claw_OLD {
+public class OLD_Claw {
     private Servo clawServo = null;
     private Servo armServo = null;
     private Servo rotationServo = null;

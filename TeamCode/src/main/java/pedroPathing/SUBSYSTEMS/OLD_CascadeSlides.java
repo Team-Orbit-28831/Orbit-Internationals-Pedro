@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class CascadeSlides_OLD {
+public class OLD_CascadeSlides {
     private DcMotorEx slideMotor;
 
 //    private PIDFCoefficients pidf;
