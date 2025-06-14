@@ -1,191 +1,88 @@
 package pedroPathing.SUBSYSTEMS;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class CascadePivot {
-    private DcMotorEx pivotMotor;
 
-//    private PIDFCoefficients pidf;
-//    public static double p=12,i=0,d=0,f=0;
+    private DcMotorEx pivotMotorLeft;
+    private DcMotorEx pivotMotorRight;
 
+    // PIDF coefficients
     public static double Kp = 0.001;
     public static double Ki = 0.00002;
     public static double Kd = 0.002;
-    public static double Kg = 0.00115;
-    public static double lastError = 0;
+    public static double Kg = 0.00115; // static feedforward
 
-    public static double integralSum = 0;
-    public static double a = 1; // a can be anything from 0 < a < 1
-    public static double previousEstimate = 0;
-    public static double currentEstimate = 0;
-    double lastReference;
-    private static final double STOP_POWER = 0.0;
+    private double integralSum = 0;
+    private double lastError = 0;
+    private double power = 0.8;
 
+    private ElapsedTime timer = new ElapsedTime();
 
     public void init(HardwareMap hardwareMap) {
+        pivotMotorLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
+        pivotMotorRight = hardwareMap.get(DcMotorEx.class, "pivotRight");
 
-//        pidf = new PIDFCoefficients(p, i, d, f);
+        // Set directions; adjust if your motors are mounted differently
+        pivotMotorLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        pivotMotorRight.setDirection(DcMotorEx.Direction.FORWARD);
 
-        pivotMotor = hardwareMap.get(DcMotorEx.class, "pivotDrive"); // Ensure this matches your config
-        pivotMotor.setDirection(DcMotorEx.Direction.FORWARD);
-        pivotMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        pivotMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        pivotMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        pivotMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-//      pivotMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        pivotMotorLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        pivotMotorRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        timer.reset();
     }
 
-    public double P(Telemetry telemetry, double reference){
-        double position = pivotMotor.getCurrentPosition();
-
-        double error = reference - position;
-
-        double out = Kp * error;
-
-        telemetry.addData("reference", reference);
-        telemetry.addData("position", position);
-        telemetry.addData("error", error);
-        telemetry.update();
-
-        return out;
-    }
-
-    public double PI(Telemetry telemetry, double reference, ElapsedTime time){
-        double position = pivotMotor.getCurrentPosition();
-
-        double error = reference - position;
-        integralSum = integralSum + (error * time.seconds());
-
-        if(reference != lastReference) integralSum = 0;
-
-        lastReference = reference;
-        double out = Kp * error + Ki * integralSum;
-
-        telemetry.addData("reference", reference);
-        telemetry.addData("position", position);
-        telemetry.addData("error", error);
-        telemetry.addData("integral sum", integralSum);
-        telemetry.addData("out", out);
-        telemetry.update();
-
-        return out;
-    }
-
-    public double PID(Telemetry telemetry, double reference, ElapsedTime time){
-        double position = pivotMotor.getCurrentPosition();
-
-        double error = reference - position;
-
-        double errorChange = (error - lastError);
-
-        currentEstimate = (a * previousEstimate) + (1-a) * errorChange;
-        previousEstimate = currentEstimate;
-
-        double derivative = currentEstimate / time.seconds();
-
-        integralSum = integralSum + (error * time.seconds());
-
-        if(reference != lastReference) integralSum = 0;
-
-        lastError = error;
-
-        lastReference = reference;
-
-        time.reset();
-
-        double out = Kp * error + Ki * integralSum + Kd * derivative;
-
-        telemetry.addData("reference", reference);
-        telemetry.addData("position", position);
-        telemetry.addData("error", error);
-        telemetry.addData("error change", errorChange);
-        telemetry.addData("derivative", derivative);
-        telemetry.addData("integral sum", integralSum);
-        telemetry.addData("out", out);
-        telemetry.update();
-
-        return out;
-    }
-
-    public double PIDF(Telemetry telemetry, double reference, ElapsedTime time){
-        double position = pivotMotor.getCurrentPosition();
-
-        double error = reference - position;
-
-        double errorChange = (error - lastError);
-
-        currentEstimate = (a * previousEstimate) + (1-a) * errorChange;
-        previousEstimate = currentEstimate;
-
-        double derivative = currentEstimate / time.seconds();
-
-        integralSum = integralSum + (error * time.seconds());
-
-        if(reference != lastReference) integralSum = 0;
-
-        lastError = error;
-
-        lastReference = reference;
-
-        time.reset();
-
-        double out = Kp * error + Ki * integralSum + Kd * derivative + Kg;
-
-        telemetry.addData("reference", reference);
-        telemetry.addData("position", position);
-        telemetry.addData("error", error);
-        telemetry.addData("error change", errorChange);
-        telemetry.addData("derivative", derivative);
-        telemetry.addData("integral sum", integralSum);
-        telemetry.addData("out", out);
-        telemetry.update();
-
-        return out;
-    }
-
-    public void moveToPosition(int reference, double power) {
-        pivotMotor.setTargetPosition(reference);
-
-        pivotMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        pivotMotor.setPower(power);
-    }
-
-    public void move(double power) {
-        pivotMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        pivotMotor.setPower(power);
-    }
-
-    public void movePivot(boolean up, boolean down) {
-        if (up) {
-            pivotMotor.setPower(1);
-        }
-        else if (down) {
-            pivotMotor.setPower(-1);
-        }
-    }
+//    public void updatePIDF(int targetPosition) {
+//        // Average position of both motors for feedback
+//        int currentPositionLeft = pivotMotorLeft.getCurrentPosition();
+//        int currentPositionRight = pivotMotorRight.getCurrentPosition();
+//        double currentPosition = (currentPositionLeft + currentPositionRight) / 2.0;
+//
+//        double error = targetPosition - currentPosition;
+//
+//        double dt = timer.seconds();
+//        if (dt == 0) dt = 0.01; // avoid divide by zero on first run
+//        timer.reset();
+//
+//        integralSum += error * dt;
+//        double derivative = (error - lastError) / dt;
+//
+//        double output = (Kp * error) + (Ki * integralSum) + (Kd * derivative) + Kg;
+//
+//        // Normalize output by power variable
+//        double motorPower = output * power;
+//
+//        // Set power to both motors
+//        pivotMotorLeft.setPower(motorPower);
+//        pivotMotorRight.setPower(motorPower);
+//
+//        lastError = error;
+//    }
 
     public void stop() {
-        pivotMotor.setPower(STOP_POWER);
+        pivotMotorLeft.setPower(0);
+        pivotMotorRight.setPower(0);
     }
 
     public int getCurrentPosition() {
-        try {
-            return (pivotMotor.getCurrentPosition());
-        } catch (Exception e) {
-            // Handle position retrieval errors
-            e.printStackTrace();
-            return 0;
-        }
+        // Return average position of both motors
+        int posLeft = pivotMotorLeft.getCurrentPosition();
+        int posRight = pivotMotorRight.getCurrentPosition();
+        return (posLeft + posRight) / 2;
+    }
+    public void setPower(double val) {
+        pivotMotorLeft.setPower(val);
+        pivotMotorRight.setPower(val);
+
     }
 }

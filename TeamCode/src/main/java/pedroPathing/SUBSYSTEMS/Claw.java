@@ -1,16 +1,16 @@
 package pedroPathing.SUBSYSTEMS;
 
-import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 public class Claw {
 
     private Servo clawServo;
+    private Servo clawRotServo;
+    private Servo clawUDServo; //claw servo up down
+
     private Limelight3A camera;
 
     private boolean isClawOpen = false;
@@ -19,14 +19,12 @@ public class Claw {
 
     private ElapsedTime timer = new ElapsedTime();
 
-    public void init(HardwareMap hardwareMap, Limelight3A camera) {
+    public void init(HardwareMap hardwareMap) {
         clawServo = hardwareMap.get(Servo.class, "clawServo");
-        this.camera = camera;
+        clawRotServo = hardwareMap.get(Servo.class,"clawRot");
+        clawUDServo = hardwareMap.get(Servo.class,"clawUD");
 
-        // Start claw closed
-        clawServo.setPosition(clawClosedPosition);
-        isClawOpen = false;
-        timer.reset();
+
     }
 
     // Control claw open/close based on buttons (example)
@@ -60,35 +58,14 @@ public class Claw {
         pos = Math.min(1.0, Math.max(0.0, pos));
         clawServo.setPosition(pos);
     }
+    public void setServoPosOC(double val){
+        clawServo.setPosition(val);
+    }
+    public void setServoPosUD(double val){
+        clawUDServo.setPosition(val);
 
-    // Your automatic claw alignment using Limelight angle
-    public void autoAlignClaw(Telemetry telemetry) {
-        if (camera == null) {
-            telemetry.addData("Claw", "No camera assigned");
-            return;
-        }
-
-        LLResult result = camera.getLatestResult();
-        if (result == null) {
-            telemetry.addData("Claw", "No Limelight result");
-            return;
-        }
-
-        double[] outputs = result.getPythonOutput();
-        if (outputs != null && outputs.length >= 4) {
-            double angleDegrees = outputs[3];
-
-            // Map 0-360 degrees to servo position 0.0-1.0
-            double servoPos = angleDegrees / 360.0;
-            servoPos = Math.min(1.0, Math.max(0.0, servoPos));
-
-            clawServo.setPosition(servoPos);
-
-            telemetry.addData("Claw Servo Angle", angleDegrees);
-            telemetry.addData("Claw Servo Position", servoPos);
-            telemetry.addData("Detected Angle",angleDegrees );
-        } else {
-            telemetry.addData("Claw", "No valid angle data");
-        }
+    }
+    public void setServoPosRot(double val){
+        clawRotServo.setPosition(val);
     }
 }

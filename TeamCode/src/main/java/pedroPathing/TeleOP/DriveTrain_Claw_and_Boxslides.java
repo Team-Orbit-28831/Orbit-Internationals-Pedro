@@ -29,7 +29,7 @@ public class DriveTrain_Claw_and_Boxslides extends LinearOpMode {
 
         // Initialize subsystems
         claw = new Claw();
-        claw.init(hardwareMap, camera);        // Pass camera to Claw directly
+//        claw.init(hardwareMap, camera);        // Pass camera to Claw directly
 
         cascadeSlides = new CascadeSlides();
         cascadeSlides.init(hardwareMap);
@@ -40,8 +40,8 @@ public class DriveTrain_Claw_and_Boxslides extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            cascadeSlides.moveSlides(gamepad1.left_bumper, gamepad1.right_bumper, 0.2);
-            claw.autoAlignClaw(telemetry);
+//            cascadeSlides.moveSlides(gamepad1.left_bumper, gamepad1.right_bumper, 0.2);
+//            claw.autoAlignClaw(telemetry);
 
             telemetry.update();
         }
