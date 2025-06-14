@@ -188,5 +188,4 @@ public class CascadePivot {
             return 0;
         }
     }
-
 }
