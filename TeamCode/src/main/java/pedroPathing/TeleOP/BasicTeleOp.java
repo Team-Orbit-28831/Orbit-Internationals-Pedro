@@ -39,7 +39,7 @@ public class BasicTeleOp extends LinearOpMode {
         telemetry.addData("Pivot pos", slidePivot.getCurrentPosition());
         telemetry.update();
 
-        slidePivot.moveToPosition(0, 0.95);
+//        slidePivot.moveToPosition(0, 0.95);
 
         waitForStart();
 
@@ -61,16 +61,16 @@ public class BasicTeleOp extends LinearOpMode {
             }
 
             if (gamepad2.dpad_left) {
-                slidePivot.moveToPosition(position11, 0.95);
+//                slidePivot.moveToPosition(position11, 0.95);
             } else if (gamepad2.dpad_right) {
-                slidePivot.moveToPosition(position22, 0.95);
+//                slidePivot.moveToPosition(position22, 0.95);
             } else if (gamepad2.dpad_down) {
-                slidePivot.moveToPosition(position0, 0.95);
+//                slidePivot.moveToPosition(position0, 0.95);
             }
             else if (gamepad2.left_stick_x > 0.15 || gamepad2.left_stick_x < 0.15) {
                 // Manual control using the left stick
                 double liftPower = -gamepad2.left_stick_x; // Invert if necessary
-                slidePivot.move(liftPower);
+//                slidePivot.move(liftPower);
         }
 
             else {
@@ -87,7 +87,7 @@ public class BasicTeleOp extends LinearOpMode {
             cascadeSlides.moveSlides(gamepad1.y, gamepad1.a);
 
             // Control the pivot with Left and Right bumpers
-            slidePivot.movePivot(gamepad1.left_bumper, gamepad1.right_bumper);
+//            slidePivot.movePivot(gamepad1.left_bumper, gamepad1.right_bumper);
 
 //            telemetry.addData("Pivot Power", slidePivot.getMotorPower()); // Show the motor power
             telemetry.addData("Current Position", cascadeSlides.getCurrentPosition());

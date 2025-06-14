@@ -34,7 +34,7 @@ public class PIDF_Test extends LinearOpMode{
 
         while(opModeIsActive()) {
             int slidepos = slides.getCurrentPosition();
-            slides.moveToPosition(500, 0.05);
+//            slides.moveToPosition(500, 0.05);
 
         }
     }

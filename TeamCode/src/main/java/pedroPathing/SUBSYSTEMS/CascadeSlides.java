@@ -56,6 +56,19 @@ public class CascadeSlides {
     }
     public void setPower(double val) {
         slideMotor.setPower(val);
+    }
 
+    public void moveSlidesTo(int targetTicks) {
+        slideMotor.setTargetPosition(targetTicks);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.5);
+
+
+        while (slideMotor.isBusy()) {
+            // Optional: you could add internal telemetry here if needed
+        }
+
+        slideMotor.setPower(0);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
 }

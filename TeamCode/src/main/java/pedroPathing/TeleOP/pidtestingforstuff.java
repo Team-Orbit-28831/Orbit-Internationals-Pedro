@@ -75,8 +75,6 @@ public class pidtestingforstuff extends LinearOpMode {
                 claw.setServoPosUD(1);
             }
 
-
-
             // Clamp targets to reasonable limits
 //            pivotTarget = clamp(pivotTarget, 0, 1500);   // Adjust limits as needed
 //            slidesTarget = clamp(slidesTarget, 0, 1500); // Adjust limits as needed
@@ -94,8 +92,6 @@ public class pidtestingforstuff extends LinearOpMode {
             telemetry.addData("Target", slidesTarget);
             telemetry.addData("Position", slides.getCurrentPosition());
             telemetry.update();
-
-
         }
 
         pivot.stop();
