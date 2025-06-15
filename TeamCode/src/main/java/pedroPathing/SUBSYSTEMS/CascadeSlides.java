@@ -68,7 +68,6 @@ public class CascadeSlides {
             // Optional: you could add internal telemetry here if needed
         }
 
-        slideMotor.setPower(0);
-        slideMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//
     }
 }

@@ -24,12 +24,16 @@ public class CascadeSlides_Movement extends LinearOpMode {
             if (gamepad1.a) {
                 cascadeSlides.moveSlidesTo(100);
             } else if (gamepad1.b) {
-                cascadeSlides.moveSlidesTo(200);
+                cascadeSlides.moveSlidesTo(800);
             } else if (gamepad1.x) {
                 cascadeSlides.moveSlidesTo(300);
             }
+            else{
+                cascadeSlides.moveSlidesTo(0);
+cascadeSlides.stop();
+            }
 
-            telemetry.addData("Position", slideMotor.getCurrentPosition());
+//            telemetry.addData("Position", slideMotor.getCurrentPosition());
             telemetry.update();
         }
     }
