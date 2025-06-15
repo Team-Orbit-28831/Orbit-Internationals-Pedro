@@ -15,9 +15,10 @@ public class Internationals_TeleOP extends LinearOpMode {
     private Claw claw;
 
     // Slide positions
-    private static final int SLIDES_POSITION0 = 0;
-    private static final int SLIDES_POSITION1 = 350;
-    private static final int SLIDES_POSITION2 = 700;
+    private static final int SLIDES_LOW_CHAMBER = 0;
+    private static final int SLIDES_HIGH_CHAMBER = 250;
+    private static final int SLIDES_LOW_BASKET = 215;
+    private static final int SLIDES_HIGH_BASKET = 700;
 
     // Claw positions
     private static final double CLAW_OPEN = 0.8;
@@ -56,7 +57,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             }
 
             if (Math.abs(gamepad2.right_stick_x) > 0.1) {
-                claw.turnClaw(0, gamepad2.right_stick_x);
+                claw.setServoPosRot(gamepad2.right_stick_x);
             }
 
             if (gamepad2.left_bumper) {
@@ -66,20 +67,23 @@ public class Internationals_TeleOP extends LinearOpMode {
             }
 
             // slides
-            if (gamepad1.y) {
-                cascadeSlides.setPower(0.8);
-            } else if (gamepad1.a) {
-                cascadeSlides.setPower(-0.8);
-            }
+//            if (gamepad2.y) {
+//                cascadeSlides.setPower(0.8);
+//            } else if (gamepad2.a) {
+//                cascadeSlides.setPower(-0.8);
+//            }
 
             // slides - PIDF
             if (gamepad2.a) {
-                cascadeSlides.moveSlidesTo(SLIDES_POSITION1);
+                cascadeSlides.moveSlidesTo(SLIDES_LOW_CHAMBER);
             } else if (gamepad2.b) {
-                cascadeSlides.moveSlidesTo(SLIDES_POSITION2);
+                cascadeSlides.moveSlidesTo(SLIDES_HIGH_CHAMBER);
             } else if (gamepad2.x) {
-                cascadeSlides.moveSlidesTo(SLIDES_POSITION0);
-            } else if (Math.abs(gamepad2.left_stick_y) > 0.15) {
+                cascadeSlides.moveSlidesTo(SLIDES_LOW_BASKET);
+            } else if (gamepad2.y) {
+                cascadeSlides.moveSlidesTo(SLIDES_HIGH_BASKET);
+            }
+            else if (Math.abs(gamepad2.left_stick_y) > 0.15) {
                 double slidesPower = -gamepad2.left_stick_y * 0.8;
                 cascadeSlides.setPower(slidesPower);
             } else {
