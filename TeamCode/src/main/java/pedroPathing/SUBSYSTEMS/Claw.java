@@ -21,8 +21,8 @@ public class Claw {
 
     public void init(HardwareMap hardwareMap) {
         clawServo = hardwareMap.get(Servo.class, "clawServo");
-        clawRotServo = hardwareMap.get(Servo.class,"clawRot");
-        clawUDServo = hardwareMap.get(Servo.class,"clawUD");
+        clawRotServo = hardwareMap.get(Servo.class, "clawRot");
+        clawUDServo = hardwareMap.get(Servo.class, "clawUD");
 
 
     }
@@ -58,14 +58,19 @@ public class Claw {
         pos = Math.min(1.0, Math.max(0.0, pos));
         clawServo.setPosition(pos);
     }
-    public void setServoPosOC(double val){
+
+    public void setServoPosOC(double val) {
         clawServo.setPosition(val);
     }
-    public void setServoPosUD(double val){
+
+    public void setServoPosUD(double val) {
         clawUDServo.setPosition(val);
 
     }
-    public void setServoPosRot(double val){
+
+    public void setServoPosRot(double val) {
         clawRotServo.setPosition(val);
     }
+
+
 }

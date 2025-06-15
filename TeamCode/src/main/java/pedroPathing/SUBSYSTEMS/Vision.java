@@ -26,12 +26,12 @@ public class Vision extends SubsystemBase {
     @Getter @Setter private SampleColor detectionColor = SampleColor.RED;
     @Getter private LLResult result;
 
-    public static double CAMERA_HEIGHT = 307.0 - 16;
+    public static double CAMERA_HEIGHT = 258 - 16;
     public static double CAMERA_ANGLE = -45.0;
     public static double TARGET_HEIGHT = 19.05;
 
     public static double strafeConversionFactor = 6.6667;
-    public static double cameraStrafeToBot = -20;
+    public static double cameraStrafeToBot = -6.1023;
 
     public static double sampleToRobotDistance = 145;
 
@@ -117,16 +117,16 @@ public class Vision extends SubsystemBase {
 
         if (result != null) {
             long staleness = result.getStaleness();
-            // Less than 100 milliseconds old
+            // Less than 100 milliseconds old666666
             isDataOld = staleness >= 100;
             telemetry.addData("Strafe Offset", getStrafeOffset());
             telemetry.addData("Distance", getDistance());
             telemetry.addData("Turn Servo Degrees", getTurnServoDegree());
 
-            //      telemetry.addData("Tx", result.getTx());
-            //      telemetry.addData("Ty", result.getTy());
-            //      telemetry.addData("Ta", result.getTa());
-            // telemetry.update();
+                  telemetry.addData("Tx", result.getTx());
+                  telemetry.addData("Ty", result.getTy());
+                  telemetry.addData("Ta", result.getTa());
+                  telemetry.update();
         }
     }
 }
