@@ -82,13 +82,13 @@ public class Internationals_TeleOP extends LinearOpMode {
 //            }
 
             // slides - PIDF
-            if (gamepad1.a) {
+            if (gamepad2.dpad_down) {
                 cascadeSlides.moveSlidesTo(SLIDES_LOW_CHAMBER);
-            } else if (gamepad1.b) {
+            } else if (gamepad2.dpad_right) {
                 cascadeSlides.moveSlidesTo(SLIDES_HIGH_CHAMBER);
-            } else if (gamepad1.x) {
+            } else if (gamepad2.dpad_left) {
                 cascadeSlides.moveSlidesTo(SLIDES_LOW_BASKET);
-            } else if (gamepad1.y) {
+            } else if (gamepad2.dpad_up) {
                 cascadeSlides.moveSlidesTo(SLIDES_HIGH_BASKET);
             }
 
