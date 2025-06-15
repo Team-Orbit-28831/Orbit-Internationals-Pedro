@@ -25,6 +25,8 @@ public class Internationals_TeleOP extends LinearOpMode {
     private static final double CLAW_CLOSED = 0.2;
     private static final double CLAW_UP = 0.9;
     private static final double CLAW_DOWN = 0.1;
+    private static final double CLAW_FLAT = 0.0;
+    private static final double CLAW_DIA = 0.75;
 
     @Override
     public void runOpMode() {
@@ -66,6 +68,12 @@ public class Internationals_TeleOP extends LinearOpMode {
                 claw.setServoPosUD(CLAW_DOWN);
             }
 
+            if (gamepad2.a) {
+                claw.setServoPosRot(CLAW_FLAT);
+            } else if (gamepad2.b) {
+                claw.setServoPosRot(CLAW_DIA);
+            }
+
             // slides
 //            if (gamepad2.y) {
 //                cascadeSlides.setPower(0.8);
@@ -74,20 +82,14 @@ public class Internationals_TeleOP extends LinearOpMode {
 //            }
 
             // slides - PIDF
-            if (gamepad2.a) {
+            if (gamepad1.a) {
                 cascadeSlides.moveSlidesTo(SLIDES_LOW_CHAMBER);
-            } else if (gamepad2.b) {
+            } else if (gamepad1.b) {
                 cascadeSlides.moveSlidesTo(SLIDES_HIGH_CHAMBER);
-            } else if (gamepad2.x) {
+            } else if (gamepad1.x) {
                 cascadeSlides.moveSlidesTo(SLIDES_LOW_BASKET);
-            } else if (gamepad2.y) {
+            } else if (gamepad1.y) {
                 cascadeSlides.moveSlidesTo(SLIDES_HIGH_BASKET);
-            }
-            else if (Math.abs(gamepad2.left_stick_y) > 0.15) {
-                double slidesPower = -gamepad2.left_stick_y * 0.8;
-                cascadeSlides.setPower(slidesPower);
-            } else {
-                cascadeSlides.stop();
             }
 
             // pivot
@@ -95,6 +97,8 @@ public class Internationals_TeleOP extends LinearOpMode {
                 cascadePivot.setPower(-0.5);
             } else if (gamepad1.right_bumper) {
                 cascadePivot.setPower(0.5);
+            } else {
+                cascadePivot.setPower(0);
             }
 
             // telemetry
