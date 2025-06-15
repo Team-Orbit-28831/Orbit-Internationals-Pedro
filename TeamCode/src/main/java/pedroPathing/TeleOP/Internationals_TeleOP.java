@@ -1,4 +1,106 @@
 package pedroPathing.TeleOP;
 
-public class Internationals_TeleOP {
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import pedroPathing.SUBSYSTEMS.Drivetrain;
+import pedroPathing.SUBSYSTEMS.CascadeSlides;
+import pedroPathing.SUBSYSTEMS.CascadePivot;
+import pedroPathing.SUBSYSTEMS.Claw;
+
+@TeleOp(name = "Internationals TeleOp", group = "Linear OpMode")
+public class Internationals_TeleOP extends LinearOpMode {
+    private Drivetrain drivetrain;
+    private CascadeSlides cascadeSlides;
+    private CascadePivot cascadePivot;
+    private Claw claw;
+
+    // Slide positions
+    private static final int SLIDES_POSITION0 = 0;
+    private static final int SLIDES_POSITION1 = 350;
+    private static final int SLIDES_POSITION2 = 700;
+
+    // Claw positions
+    private static final double CLAW_OPEN = 0.8;
+    private static final double CLAW_CLOSED = 0.2;
+    private static final double CLAW_UP = 0.9;
+    private static final double CLAW_DOWN = 0.1;
+
+    @Override
+    public void runOpMode() {
+        drivetrain = new Drivetrain();
+        cascadeSlides = new CascadeSlides();
+        cascadePivot = new CascadePivot();
+        claw = new Claw();
+
+        drivetrain.init(hardwareMap);
+        cascadeSlides.init(hardwareMap);
+        cascadePivot.init(hardwareMap);
+        claw.init(hardwareMap);
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Slides pos", cascadeSlides.getCurrentPosition());
+        telemetry.addData("Pivot pos", cascadePivot.getCurrentPosition());
+        telemetry.update();
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+            // drivetrain
+            drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
+            // claw
+            if (gamepad2.left_trigger > 0.1) {
+                claw.setServoPosOC(CLAW_OPEN);
+            } else if (gamepad2.right_trigger > 0.1) {
+                claw.setServoPosOC(CLAW_CLOSED);
+            }
+
+            if (Math.abs(gamepad2.right_stick_x) > 0.1) {
+                claw.turnClaw(0, gamepad2.right_stick_x);
+            }
+
+            if (gamepad2.left_bumper) {
+                claw.setServoPosUD(CLAW_UP);
+            } else if (gamepad2.right_bumper) {
+                claw.setServoPosUD(CLAW_DOWN);
+            }
+
+            // slides
+            if (gamepad1.y) {
+                cascadeSlides.setPower(0.8);
+            } else if (gamepad1.a) {
+                cascadeSlides.setPower(-0.8);
+            }
+
+            // slides - PIDF
+            if (gamepad2.a) {
+                cascadeSlides.moveSlidesTo(SLIDES_POSITION1);
+            } else if (gamepad2.b) {
+                cascadeSlides.moveSlidesTo(SLIDES_POSITION2);
+            } else if (gamepad2.x) {
+                cascadeSlides.moveSlidesTo(SLIDES_POSITION0);
+            } else if (Math.abs(gamepad2.left_stick_y) > 0.15) {
+                double slidesPower = -gamepad2.left_stick_y * 0.8;
+                cascadeSlides.setPower(slidesPower);
+            } else {
+                cascadeSlides.stop();
+            }
+
+            // pivot
+            if (gamepad1.left_bumper) {
+                cascadePivot.setPower(-0.5);
+            } else if (gamepad1.right_bumper) {
+                cascadePivot.setPower(0.5);
+            }
+
+            // telemetry
+            telemetry.addData("Current Slides Position", cascadeSlides.getCurrentPosition());
+            telemetry.addData("Current Pivot Position", cascadePivot.getCurrentPosition());
+            telemetry.addData("Left Stick Y", gamepad2.left_stick_y);
+            telemetry.addData("Left Stick X", gamepad2.left_stick_x);
+            telemetry.addData("Right Stick X", gamepad2.right_stick_x);
+
+            telemetry.update();
+        }
+    }
 }
