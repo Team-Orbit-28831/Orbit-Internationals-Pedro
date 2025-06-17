@@ -61,7 +61,7 @@ public class CascadeSlides {
     public void moveSlidesTo(int targetTicks) {
         slideMotor.setTargetPosition(targetTicks);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.5);
+        slideMotor.setPower(0.75);
 
 
         while (slideMotor.isBusy()) {

@@ -27,10 +27,10 @@
             frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");     // CONTROL: port 3
 
             // Set motor directions (adjust if needed)
-            frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-            backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-            frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-            backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+            frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+            backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+            frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+            backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
             // Reset timer
             timer.reset();
