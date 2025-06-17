@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+
 @Config
 public class Vision extends SubsystemBase {
     private final Limelight3A camera;
@@ -29,6 +30,8 @@ public class Vision extends SubsystemBase {
     public static double CAMERA_HEIGHT = 258 - 16;
     public static double CAMERA_ANGLE = -45.0;
     public static double TARGET_HEIGHT = 19.05;
+
+
 
     public static double strafeConversionFactor = 6.6667;
     public static double cameraStrafeToBot = -6.1023;

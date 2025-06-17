@@ -7,6 +7,8 @@ import pedroPathing.SUBSYSTEMS.CascadeSlides;
 import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.Claw;
 import pedroPathing.SUBSYSTEMS.Vision;
+import com.pedropathing.follower.Follower;
+
 @TeleOp(name = "Internationals TeleOp", group = "Linear OpMode")
 public class Internationals_TeleOP extends LinearOpMode {
     private Drivetrain drivetrain;
@@ -14,6 +16,7 @@ public class Internationals_TeleOP extends LinearOpMode {
     private CascadePivot cascadePivot;
     private Claw claw;
     private Vision vision;
+    private Follower follower;
     // Slide positions
     private static final int SLIDES_POSITION0 = 0;
     private static final int SLIDES_POSITION1 = 350;
@@ -58,6 +61,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             // drivetrain
             drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             vision.periodic();
+
             // claw
             if (gamepad2.left_trigger > 0.1) {
                 claw.setServoPosOC(CLAW_OPEN);
