@@ -150,7 +150,10 @@ public class Internationals_TeleOP_Pedro extends OpMode {
 
         }
         if (gamepad1.x ) {
-            follower.breakFollowing(); // Emergency stop path following
+            follower.breakFollowing();
+            follower.startTeleopDrive();
+            follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+            follower.update();
             telemetry.addLine("Path following stopped manually!");
         }
 
