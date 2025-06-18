@@ -10,23 +10,25 @@ import pedroPathing.SUBSYSTEMS.Vision;
 import com.pedropathing.follower.Follower;
 
 @TeleOp(name = "Internationals TeleOp", group = "Linear OpMode")
-public class Internationals_TeleOP extends LinearOpMode {
+public class Teleop_Internationals_Test extends LinearOpMode {
     private Drivetrain drivetrain;
     private CascadeSlides cascadeSlides;
     private CascadePivot cascadePivot;
     private Claw claw;
     private Vision vision;
     private Follower follower;
+
     // Slide positions
     private static final int SLIDES_POSITION0 = 0;
     private static final int SLIDES_POSITION1 = 350;
     private static final int SLIDES_POSITION2 = 700;
 
-    // Claw positions
-    private static final double CLAW_OPEN = 0.8;
+    // Claw positions - SAFE STARTING VALUES
+    private static final double CLAW_OPEN = 0.6;
     private static final double CLAW_CLOSED = 0.3;
-    private static final double CLAW_UP = 0.7;
-    private static final double CLAW_DOWN = 0.3;
+    private static final double CLAW_UP = 0.8;       // Start higher
+    private static final double CLAW_DOWN = 0.2;     // Start lower
+    private static final double CLAW_NEUTRAL = 0.5;  // True middle position
 
     // variables
     private Vision.SampleColor currentColor = Vision.SampleColor.RED;
@@ -46,13 +48,17 @@ public class Internationals_TeleOP extends LinearOpMode {
         claw.init(hardwareMap);
         vision = new Vision(hardwareMap, telemetry);
 
-        vision.initializeCamera();  // Start the Limelight camera
+        vision.initializeCamera();
+
+        // Initialize claw to neutral position
+        claw.setServoPosUD(CLAW_NEUTRAL);
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Slides pos", cascadeSlides.getCurrentPosition());
         telemetry.addData("Pivot pos", cascadePivot.getCurrentPosition());
         telemetry.addLine("Vision initialized. Waiting for start...");
         telemetry.addLine("Vision is init for RED");
+        telemetry.addLine("Claw initialized to neutral position");
         telemetry.update();
 
         waitForStart();
@@ -62,30 +68,40 @@ public class Internationals_TeleOP extends LinearOpMode {
             drivetrain.drive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
             vision.periodic();
 
-            // claw
+            // claw open/close
             if (gamepad2.left_trigger > 0.1) {
                 claw.setServoPosOC(CLAW_OPEN);
             } else if (gamepad2.right_trigger > 0.1) {
                 claw.setServoPosOC(CLAW_CLOSED);
             }
 
+            // claw rotation
             if (Math.abs(gamepad2.right_stick_x) > 0.1) {
                 claw.turnClaw(0, gamepad2.right_stick_x);
             }
 
+            // claw up/down with improved control
             if (gamepad2.left_bumper) {
                 claw.setServoPosUD(CLAW_UP);
+                telemetry.addData("Claw Command", "UP - Position: " + CLAW_UP);
             } else if (gamepad2.right_bumper) {
                 claw.setServoPosUD(CLAW_DOWN);
+                telemetry.addData("Claw Command", "DOWN - Position: " + CLAW_DOWN);
             }
 
-            // slides
-            if (gamepad2.y) {
-                cascadeSlides.setPower(0.8);
-            } else if (gamepad2.a) {
-                cascadeSlides.setPower(-0.8);
-            } else {
-                cascadeSlides.setPower(0);
+            // Manual claw up/down testing with D-pad
+            if (gamepad2.dpad_up) {
+                claw.setServoPosUD(0.6);
+                telemetry.addData("Manual Claw", "Testing position 0.6");
+            } else if (gamepad2.dpad_down) {
+                claw.setServoPosUD(0.2);
+                telemetry.addData("Manual Claw", "Testing position 0.2");
+            } else if (gamepad2.dpad_left) {
+                claw.setServoPosUD(0.4);
+                telemetry.addData("Manual Claw", "Testing position 0.4");
+            } else if (gamepad2.dpad_right) {
+                claw.setServoPosUD(CLAW_NEUTRAL);
+                telemetry.addData("Manual Claw", "Neutral position");
             }
 
             // slides - PIDF
@@ -107,60 +123,55 @@ public class Internationals_TeleOP extends LinearOpMode {
                 cascadePivot.setPower(-0.5);
             } else if (gamepad1.right_bumper) {
                 cascadePivot.setPower(0.5);
-            }
-            else {
+            } else {
                 cascadePivot.setPower(0);
             }
 
-            // vision
+            // vision color cycling
             boolean currentButtonState = gamepad1.a;
-
-//            if (currentButtonState && !lastButtonState) {
-//                // Cycle colors using if statements
-//                if (currentColor == Vision.SampleColor.RED) {
-//                    currentColor = Vision.SampleColor.BLUE;
-//                } else if (currentColor == Vision.SampleColor.BLUE) {
-//                    currentColor = Vision.SampleColor.YELLOW;
-//                } else if (currentColor == Vision.SampleColor.YELLOW) {
-//                    currentColor = Vision.SampleColor.RED;
-//                }
+            if (currentButtonState && !lastButtonState) {
+                if (currentColor == Vision.SampleColor.RED) {
+                    currentColor = Vision.SampleColor.BLUE;
+                } else if (currentColor == Vision.SampleColor.BLUE) {
+                    currentColor = Vision.SampleColor.YELLOW;
+                } else if (currentColor == Vision.SampleColor.YELLOW) {
+                    currentColor = Vision.SampleColor.RED;
+                }
             }
+            lastButtonState = currentButtonState;
+
+            // vision processing and servo rotation
             if (gamepad1.b) {
-                Double angle = vision.getTurnServoDegree(); // Should be 0 to 360
+                Double angle = vision.getTurnServoDegree();
 
-                if (angle != 0) {
-                    // Clamp just in case
+                if (angle != null && angle != 0) {
                     angle = Math.max(0, Math.min(angle, 360));
-
-                    // Map 0-360 degrees to 0.0-1.0 servo range
                     double servoPos = angle / 360.0;
-
                     claw.setServoPosRot(servoPos);
                 }
 
-                // Set the detection color in your vision subsystem
                 vision.setDetectionColor(currentColor);
-
-                // Telemetry for feedback
-                telemetry.addData("Current Color", currentColor.name());
-
-                // Vision color cycling
-
-// Optional: keep track of selected color in telemetry
-
-                // telemetry
-                telemetry.addData("Current Slides Position", cascadeSlides.getCurrentPosition());
-                telemetry.addData("Current Pivot Position", cascadePivot.getCurrentPosition());
-                telemetry.addData("Left Stick Y", gamepad2.left_stick_y);
-                telemetry.addData("Left Stick X", gamepad2.left_stick_x);
-                telemetry.addData("Right Stick X", gamepad2.right_stick_x);
-                telemetry.addData("controlscounter", "temp");
-                telemetry.addData("vision", vision.isTargetVisible());
-                telemetry.addData("distance", vision.getDistance());
-                telemetry.addData("angle", vision.getTurnServoDegree());
-
-                telemetry.update();
             }
+
+            // Enhanced telemetry for debugging
+            telemetry.addData("=== CONTROLS ===", "");
+            telemetry.addData("Left Bumper (UP)", gamepad2.left_bumper ? "PRESSED" : "Released");
+            telemetry.addData("Right Bumper (DOWN)", gamepad2.right_bumper ? "PRESSED" : "Released");
+            telemetry.addData("=== CLAW POSITIONS ===", "");
+            telemetry.addData("CLAW_UP", CLAW_UP);
+            telemetry.addData("CLAW_DOWN", CLAW_DOWN);
+            telemetry.addData("CLAW_NEUTRAL", CLAW_NEUTRAL);
+            telemetry.addData("=== SYSTEM STATUS ===", "");
+            telemetry.addData("Current Color", currentColor.name());
+            telemetry.addData("Current Slides Position", cascadeSlides.getCurrentPosition());
+            telemetry.addData("Current Pivot Position", cascadePivot.getCurrentPosition());
+            telemetry.addData("=== VISION ===", "");
+            telemetry.addData("Vision Target", vision.isTargetVisible());
+            telemetry.addData("Distance", vision.getDistance());
+            telemetry.addData("Angle", vision.getTurnServoDegree());
+            telemetry.addData("=== DEBUG INFO ===", "");
+            telemetry.addData("Use D-pad to test", "Up/Down/Left/Right for different positions");
+            telemetry.update();
         }
     }
-
+}
