@@ -100,6 +100,15 @@ public class Internationals_TeleOP extends LinearOpMode {
                 cascadeSlides.stop();
             }
 
+            // slides - Manual
+            if (gamepad2.x) {
+                cascadeSlides.setPower(0.5);
+            } else if (gamepad2.y) {
+                cascadeSlides.setPower(-0.5);
+            } else {
+                cascadeSlides.setPower(0);
+            }
+
             // pivot
             if (gamepad1.left_bumper) {
                 cascadePivot.setPower(-0.5);
@@ -109,6 +118,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             else{
                 cascadePivot.setPower(0);
             }
+
             // vision
             boolean currentButtonState = gamepad1.a;
 
