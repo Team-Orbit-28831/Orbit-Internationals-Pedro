@@ -32,11 +32,13 @@ public class Internationals_TeleOP_Pedro extends OpMode {
     private static final int SLIDES_POSITION2 = 700;
 
     // Claw servo positions
-    private static final double CLAW_OPEN = 0.8;
-    private static final double CLAW_CLOSED = 0.2;
+    private static final double CLAW_OPEN = 0.2;
+    private static final double CLAW_CLOSED = 0.8;
     private static final double CLAW_UP = 0.9;
     private static final double CLAW_DOWN = 0.1;
     private boolean atPoint = false;
+
+
 
     private Vision.SampleColor currentColor = Vision.SampleColor.RED;
     private boolean lastButtonState = false;
@@ -81,9 +83,9 @@ public class Internationals_TeleOP_Pedro extends OpMode {
         vision.periodic();
 
         // Claw controls (gamepad2)
-        if (gamepad2.left_trigger > 0.1) {
+        if (gamepad2.left_bumper) {
             claw.setServoPosOC(CLAW_OPEN);
-        } else if (gamepad2.right_trigger > 0.1) {
+        } else if (gamepad2.right_bumper) {
             claw.setServoPosOC(CLAW_CLOSED);
         }
 
@@ -155,30 +157,40 @@ public class Internationals_TeleOP_Pedro extends OpMode {
                 claw.setServoPosRot(servoPos);
                 claw.setServoPosOC(CLAW_OPEN);
 
-            Point startPoint = new Point(currentPose.getX(), currentPose.getY());
-            Point endPoint = new Point(currentPose.getX()-5, currentPose.getY());
-
-            follower.followPath(follower.pathBuilder()
-                    .addPath(new BezierLine(startPoint, endPoint))
-                    .setConstantHeadingInterpolation(currentPose.getHeading()) // Keeps current heading
-                    .build());
-
-                while (!follower.atPoint(endPoint, 0.3, 0.3)) {
-                    follower.update();
 
 
 
-                }
 
-                follower.breakFollowing();
-                follower.startTeleopDrive();
-                cascadeSlides.moveSlidesTo((int) Math.round(vision.getDistance() + 170));
+                Point startPoint = new Point(currentPose.getX(), currentPose.getY());
+                Point endPoint = new Point(currentPose.getX() , currentPose.getY()- (vision.getStrafeOffset() / 25.4));
+                follower.setMaxPower(0.3);
+                follower.followPath(follower.pathBuilder()
+                        .addPath(new BezierLine(startPoint, endPoint))
+                        .setConstantHeadingInterpolation(currentPose.getHeading()) // Keeps current heading
+                        .build());
 
-                cascadePivot.setPos(30);
-                while (!(cascadePivot.getCurrentPosition() > 20 && cascadePivot.getCurrentPosition() <40 )){
+                    while (!follower.atPoint(endPoint, 0.3, 0.3)) {
+                        follower.update();
 
-                }
-                claw.setServoPosOC(CLAW_CLOSED);
+
+
+                    }
+
+                    follower.breakFollowing();
+                    follower.startTeleopDrive();
+                    cascadeSlides.moveSlidesTo((int) Math.round(vision.getDistance() + 170));
+
+                    cascadePivot.setPos(30);
+                    while (!(cascadePivot.getCurrentPosition() > 20 && cascadePivot.getCurrentPosition() <40 )){
+
+                    }
+                    claw.setServoPosOC(CLAW_CLOSED);
+
+
+            }
+
+
+
         }
         if (gamepad1.x ) {
             follower.breakFollowing();
@@ -203,8 +215,8 @@ public class Internationals_TeleOP_Pedro extends OpMode {
         telemetry.update();
     }
 
-//    @Override
-//    public void stop() {
-//         Optional cleanup if needed
+    @Override
+    public void stop() {
+        // Optional cleanup if needed
     }
 }
