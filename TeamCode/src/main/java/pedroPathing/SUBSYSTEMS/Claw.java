@@ -43,11 +43,11 @@ public class Claw {
     // Example of manual claw angle turn control (if you want)
     public void turnClaw(double leftTrigger, double rightTrigger) {
         // Increment or decrement servo position slightly based on triggers
-        double pos = clawServo.getPosition();
-        double change = (rightTrigger - leftTrigger) * 0.01; // small step per loop
+        double pos = clawRotServo.getPosition();
+        double change = (rightTrigger - leftTrigger)*0.1; // small step per loop
         pos += change;
         pos = Math.min(1.0, Math.max(0.0, pos));
-        clawServo.setPosition(pos);
+        clawRotServo.setPosition(pos);
     }
 
     // Example method for setting claw angle explicitly

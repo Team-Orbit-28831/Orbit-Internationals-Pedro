@@ -27,14 +27,14 @@ public class Vision extends SubsystemBase {
     @Getter @Setter private SampleColor detectionColor = SampleColor.RED;
     @Getter private LLResult result;
 
-    public static double CAMERA_HEIGHT = 258 - 16;
+    public static double CAMERA_HEIGHT = 349 - 16;
     public static double CAMERA_ANGLE = -45.0;
     public static double TARGET_HEIGHT = 19.05;
 
 
 
     public static double strafeConversionFactor = 6.6667;
-    public static double cameraStrafeToBot = -6.1023;
+    public static double cameraStrafeToBot = -13.25;
 
     public static double sampleToRobotDistance = 145;
 

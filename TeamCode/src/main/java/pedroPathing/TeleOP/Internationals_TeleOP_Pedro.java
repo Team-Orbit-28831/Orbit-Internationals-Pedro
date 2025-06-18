@@ -32,10 +32,12 @@ public class Internationals_TeleOP_Pedro extends OpMode {
     private static final int SLIDES_POSITION2 = 700;
 
     // Claw servo positions
-    private static final double CLAW_OPEN = 0.8;
-    private static final double CLAW_CLOSED = 0.2;
+    private static final double CLAW_OPEN = 0.2;
+    private static final double CLAW_CLOSED = 0.8;
     private static final double CLAW_UP = 0.9;
     private static final double CLAW_DOWN = 0.1;
+    private boolean atPoint = false;
+
 
     private Vision.SampleColor currentColor = Vision.SampleColor.RED;
     private boolean lastButtonState = false;
@@ -80,14 +82,14 @@ public class Internationals_TeleOP_Pedro extends OpMode {
         vision.periodic();
 
         // Claw controls (gamepad2)
-        if (gamepad2.left_trigger > 0.1) {
+        if (gamepad2.left_bumper) {
             claw.setServoPosOC(CLAW_OPEN);
-        } else if (gamepad2.right_trigger > 0.1) {
+        } else if (gamepad2.right_bumper) {
             claw.setServoPosOC(CLAW_CLOSED);
         }
 
-        if (Math.abs(gamepad2.right_stick_x) > 0.1) {
-            claw.turnClaw(0, gamepad2.right_stick_x);
+        if (gamepad2.left_trigger > 0.1 || gamepad2.right_trigger > 0.1 ) {
+            claw.turnClaw(gamepad2.left_trigger,gamepad2.right_trigger);
         }
 
         if (gamepad2.left_bumper) {
@@ -140,13 +142,53 @@ public class Internationals_TeleOP_Pedro extends OpMode {
 //            }
             Pose currentPose = follower.getPose();
 
-            Point startPoint = new Point(currentPose.getX(), currentPose.getY());
-            Point endPoint = new Point(currentPose.getX()-5, currentPose.getY());
+            Double angle = vision.getTurnServoDegree(); // Should be 0 to 360
 
-            follower.followPath(follower.pathBuilder()
-                    .addPath(new BezierLine(startPoint, endPoint))
-                    .setConstantHeadingInterpolation(currentPose.getHeading()) // Keeps current heading
-                    .build());
+            if (angle != 0) {
+                // Clamp just in case
+                //0.98562628 = ticks per mm
+                angle = Math.max(0, Math.min(angle, 360));
+                double perpangle = (angle + 90) % 360;
+
+                // Map 0-360 degrees to 0.0-1.0 servo range
+                double servoPos = perpangle / 360.0;
+                cascadePivot.setPos(-150);
+                claw.setServoPosRot(servoPos);
+                claw.setServoPosOC(CLAW_OPEN);
+
+
+
+
+
+                Point startPoint = new Point(currentPose.getX(), currentPose.getY());
+                Point endPoint = new Point(currentPose.getX() , currentPose.getY()- (vision.getStrafeOffset() / 25.4));
+                follower.setMaxPower(0.3);
+                follower.followPath(follower.pathBuilder()
+                        .addPath(new BezierLine(startPoint, endPoint))
+                        .setConstantHeadingInterpolation(currentPose.getHeading()) // Keeps current heading
+                        .build());
+
+                    while (!follower.atPoint(endPoint, 0.3, 0.3)) {
+                        follower.update();
+
+
+
+                    }
+
+                    follower.breakFollowing();
+                    follower.startTeleopDrive();
+                    cascadeSlides.moveSlidesTo((int) Math.round(vision.getDistance() + 170));
+
+                    cascadePivot.setPos(30);
+                    while (!(cascadePivot.getCurrentPosition() > 20 && cascadePivot.getCurrentPosition() <40 )){
+
+                    }
+                    claw.setServoPosOC(CLAW_CLOSED);
+
+
+            }
+
+
 
         }
         if (gamepad1.x ) {
