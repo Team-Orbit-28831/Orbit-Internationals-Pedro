@@ -26,9 +26,9 @@ public class Teleop_Internationals_Test extends LinearOpMode {
     // Claw positions - SAFE STARTING VALUES
     private static final double CLAW_OPEN = 0.6;
     private static final double CLAW_CLOSED = 0.3;
-    private static final double CLAW_UP = 0.8;       // Start higher
-    private static final double CLAW_DOWN = 0.2;     // Start lower
-    private static final double CLAW_NEUTRAL = 0.5;  // True middle position
+    private static final double CLAW_UP = 0.8;          // Start higher
+    private static final double CLAW_DOWN = 0.2;        // Start lower
+    private static final double CLAW_NEUTRAL = 0.5;     // True middle position
 
     // variables
     private Vision.SampleColor currentColor = Vision.SampleColor.RED;
