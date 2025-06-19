@@ -9,7 +9,7 @@ import pedroPathing.SUBSYSTEMS.Claw;
 import pedroPathing.SUBSYSTEMS.Vision;
 import com.pedropathing.follower.Follower;
 
-@TeleOp(name = "Internationals TeleOp", group = "Linear OpMode")
+@TeleOp(name = "Internationals TeleOp teset do no use", group = "Linear OpMode")
 public class Teleop_Internationals_Test extends LinearOpMode {
     private Drivetrain drivetrain;
     private CascadeSlides cascadeSlides;

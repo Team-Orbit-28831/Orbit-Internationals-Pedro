@@ -34,8 +34,9 @@ public class Internationals_TeleOP_Pedro extends OpMode {
     // Claw servo positions
     private static final double CLAW_OPEN = 0.2;
     private static final double CLAW_CLOSED = 0.8;
-    private static final double CLAW_UP = 0.9;
-    private static final double CLAW_DOWN = 0.1;
+    private static final double CLAW_UP = 0.8;          // Start higher
+    private static final double CLAW_DOWN = 0.2;        // Start lower
+    private static final double CLAW_NEUTRAL = 0.5;
     private boolean atPoint = false;
 
 
@@ -94,8 +95,12 @@ public class Internationals_TeleOP_Pedro extends OpMode {
         }
 
         if (gamepad2.left_bumper) {
+            claw.setServoPosUD(CLAW_NEUTRAL);
+            sleep(10);
             claw.setServoPosUD(CLAW_UP);
         } else if (gamepad2.right_bumper) {
+            claw.setServoPosUD(CLAW_NEUTRAL);
+            sleep(10);
             claw.setServoPosUD(CLAW_DOWN);
         }
 
@@ -180,10 +185,8 @@ public class Internationals_TeleOP_Pedro extends OpMode {
                     follower.startTeleopDrive();
                     cascadeSlides.moveSlidesTo((int) Math.round(vision.getDistance() + 170));
 
-                    cascadePivot.setPos(30);
-                    while (!(cascadePivot.getCurrentPosition() > 20 && cascadePivot.getCurrentPosition() <40 )){
+                    //cascadePivot.setPos(30);
 
-                    }
                     claw.setServoPosOC(CLAW_CLOSED);
 
 
