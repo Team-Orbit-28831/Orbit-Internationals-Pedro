@@ -18,7 +18,7 @@ import pedroPathing.constants.LConstants;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "Enhanced_PedroPathing", group = "Autonomous")
+@Autonomous(name = "Internationals Autonomous", group = "Autonomous")
 public class BasicAutonomous extends OpMode {
 
     // Static path definitions (like GeneratedPaths structure)
@@ -262,7 +262,7 @@ public class BasicAutonomous extends OpMode {
                 }
                 break;
 
-            case 2: // Optional action state (e.g., scoring, collection)
+            case 2: // Optional
                 if (actionTimer.getElapsedTimeSeconds() > 1.0) { // 1 second action
                     setPathState(0); // Return to path following
                 }

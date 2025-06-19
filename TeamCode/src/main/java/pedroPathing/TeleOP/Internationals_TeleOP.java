@@ -94,9 +94,9 @@ public class Internationals_TeleOP extends LinearOpMode {
 
             // pivot
             if (gamepad1.left_bumper) {
-                cascadePivot.setPower(-0.6);
+                cascadePivot.setPower(-0.5);
             } else if (gamepad1.right_bumper) {
-                cascadePivot.setPower(0.6);
+                cascadePivot.setPower(0.5);
             } else {
                 cascadePivot.setPower(0);
             }

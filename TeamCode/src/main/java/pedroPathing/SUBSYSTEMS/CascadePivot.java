@@ -85,4 +85,10 @@ public class CascadePivot {
         pivotMotorRight.setPower(val);
 
     }
+    public void setPos(int val){
+        pivotMotorLeft.setTargetPosition(val);
+        pivotMotorRight.setTargetPosition(val);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+    }
 }
