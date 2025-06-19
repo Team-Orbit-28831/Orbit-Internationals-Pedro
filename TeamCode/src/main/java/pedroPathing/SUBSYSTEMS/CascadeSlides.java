@@ -1,73 +1,106 @@
 package pedroPathing.SUBSYSTEMS;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Subsystem;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.arcrobotics.ftclib.controller.PIDFController;
 
-public class CascadeSlides {
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-    private DcMotorEx slideMotor;
 
-    // PIDF coefficients
-    public static double Kp = 11;
-    public static double Ki = 0.00002;
-    public static double Kd = 0.002;
-    public static double Kg = 0.064;  // static feedforward
+public class CascadeSlides implements Subsystem {
 
-    private double integralSum = 0;
-    private double lastError = 0;
-    private double power = 0.5;
+    // Slide positions
+    private static final double SLIDES_LOW_CHAMBER = 0;
+    private static final double SLIDES_HIGH_CHAMBER = 250;
+    private static final double SLIDES_LOW_BASKET = 215;
+    private static final double SLIDES_HIGH_BASKET = 700;
+    public static DcMotorEx slideMotor;
 
     private ElapsedTime timer = new ElapsedTime();
 
-    public void init(HardwareMap hardwareMap) {
+    public static double p = 0.05;
+    public static double i = 0;
+    public static double d = 0;
+    public static double f = 0 ;
+    public static PIDFController pidf = new PIDFController(p, i, d, f);
+    public static double target;
+
+
+    public CascadeSlides(HardwareMap hardwareMap, Telemetry telemetry) {
         slideMotor = hardwareMap.get(DcMotorEx.class, "cascade");
         slideMotor.setDirection(DcMotorEx.Direction.REVERSE);
         slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+        slideMotor.setPower(0);
+        this.telemetry = telemetry;
         timer.reset();
     }
 
-//    public void updatePIDF(int targetPosition) {
-//        double currentPosition = slideMotor.getCurrentPosition();
-//        double error = targetPosition - currentPosition;
-//
-//        double dt = timer.seconds();
-//        timer.reset();
-//
-//        integralSum += error * dt;
-//        double derivative = (error - lastError) / dt;
-//
-//        double output = (Kp * error) + (Ki * integralSum) + (Kd * derivative) + Kg;
-//
-//        slideMotor.setPower(output/power);
-//
-//        lastError = error;
-//    }
+    public void setSlideTarget(double target) {
+        CascadeSlides.target = target;
+        pidf.setSetPoint(target);
+        autoUpdateSlides();
+    }
+
+    public void slideLowBasket() {
+        setSlideTarget(SLIDES_LOW_BASKET);
+    }
+
+    public void slideHighBasket() {
+        setSlideTarget(SLIDES_HIGH_BASKET);
+    }
+
+    public void slideHighChamber() {
+        setSlideTarget(SLIDES_HIGH_CHAMBER);
+    }
+
+    public void slideLowChamber() {
+        setSlideTarget(SLIDES_LOW_CHAMBER);
+    }
+
+
+    private static Telemetry telemetry;
+
+    public static void autoUpdateSlides() {
+        pidf.setPIDF(p, i, d, f);
+
+        double pos = slideMotor.getCurrentPosition();
+        double power = pidf.calculate(pos, target);
+
+
+        telemetry.addData("Target Position", target);
+        telemetry.addData("Current Position Left", pos);
+
+        telemetry.update();
+
+
+        slideMotor.setPower(power);
+
+    }
+
 
     public void stop() {
         slideMotor.setPower(0);
+
     }
 
     public int getCurrentPosition() {
         return slideMotor.getCurrentPosition();
     }
+
     public void setPower(double val) {
         slideMotor.setPower(val);
     }
 
-    public void moveSlidesTo(int targetTicks) {
-        slideMotor.setTargetPosition(targetTicks);
-        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.75);
+    @Override
+    public void periodic() {
+        autoUpdateSlides();
 
-
-        while (slideMotor.isBusy()) {
-            // Optional: you could add internal telemetry here if needed
-        }
-
-//
     }
 }

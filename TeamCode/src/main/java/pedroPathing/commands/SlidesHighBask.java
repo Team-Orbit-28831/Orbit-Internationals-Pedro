@@ -1,0 +1,25 @@
+package pedroPathing.commands;
+import com.arcrobotics.ftclib.command.CommandBase;
+
+import pedroPathing.SUBSYSTEMS.CascadeSlides;
+
+public class SlidesHighBask extends CommandBase{
+    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+    private final CascadeSlides cascadeSlidesE;
+
+    public SlidesHighBask(CascadeSlides subsystem) {
+        cascadeSlidesE = subsystem;
+
+        addRequirements(subsystem);
+    }
+
+    @Override
+    public void initialize() {
+        cascadeSlidesE.slideHighBasket();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
+}
