@@ -1,7 +1,5 @@
 package pedroPathing.TeleOP;
 
-import static android.os.SystemClock.sleep;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierLine;
@@ -16,7 +14,7 @@ import pedroPathing.SUBSYSTEMS.Vision;
 import pedroPathing.commands.PivotBask;
 import pedroPathing.commands.SlidesHighBask;
 import pedroPathing.commands.SlidesLowBask;
-import pedroPathing.commands.PivotSample;
+import pedroPathing.commands.PivotSampleShort;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -159,7 +157,7 @@ public class Internationals_TeleOP_Pedro extends LinearOpMode {
         // Command-based bindings for preset positions
         driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
                 new SequentialCommandGroup(
-                        new PivotSample(cascadePivot),
+                        new PivotSampleShort(cascadePivot),
                         new SlidesLowBask(cascadeSlides)
                 )
         );

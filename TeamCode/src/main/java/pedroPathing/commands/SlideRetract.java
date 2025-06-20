@@ -1,15 +1,16 @@
 package pedroPathing.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import pedroPathing.SUBSYSTEMS.CascadeSlides;
 import pedroPathing.SUBSYSTEMS.Claw;
 
-public class ClawDown extends CommandBase {
+public class SlideRetract extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-    private final Claw claw;
+    private final CascadeSlides slides;
 
 
-    public ClawDown(Claw subsystem) {
-        claw = subsystem;
+    public SlideRetract(CascadeSlides subsystem) {
+        slides = subsystem;
 
         addRequirements(subsystem);
     }
@@ -17,8 +18,7 @@ public class ClawDown extends CommandBase {
     @Override
     public void initialize() {
         //turn outtake on
-        claw.midpoint();
-        claw.downClaw();
+        slides.retract();
     }
 
     @Override

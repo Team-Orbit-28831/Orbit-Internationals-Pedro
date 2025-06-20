@@ -16,10 +16,10 @@ public class Claw implements Subsystem {
 
     private boolean isClawOpen = false;
 
-    private static final double CLAW_OPEN = 0.6;
-    private static final double CLAW_CLOSED = 0.2;
-    private static final double CLAW_UP = 0.1;
-    private static final double CLAW_DOWN = 0.7;
+    private static final double CLAW_OPEN = 0;
+    private static final double CLAW_CLOSED = 0.9;
+    private static final double CLAW_UP = 0.4;
+    private static final double CLAW_DOWN = 0;
     private static final double CLAW_FLAT = 0.0;
     private static final double CLAW_DIA = 0.75;
 
@@ -29,6 +29,7 @@ public class Claw implements Subsystem {
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         clawRotServo = hardwareMap.get(Servo.class, "clawRot");
         clawUDServo = hardwareMap.get(Servo.class, "clawUD");
+        clawUDServo.setDirection(Servo.Direction.REVERSE);
 
 
     }
@@ -82,6 +83,10 @@ public class Claw implements Subsystem {
         clawServo.setPosition(CLAW_CLOSED);
     }
 
+    public void midpoint() {
+        clawServo.setPosition(0.35);
+    }
+
     public void upClaw() {
         clawUDServo.setPosition(CLAW_UP);
     }
@@ -89,6 +94,7 @@ public class Claw implements Subsystem {
     public void downClaw() {
         clawUDServo.setPosition(CLAW_DOWN);
     }
+
 
     public void defaultPos() {
         clawRotServo.setPosition(CLAW_FLAT);
@@ -101,6 +107,11 @@ public class Claw implements Subsystem {
     public void setServoPosRot(double val) {
         clawRotServo.setPosition(val);
     }
+
+    public double getCurrentUDPos() {
+        return clawUDServo.getPosition();
+    }
+
 
 
 }

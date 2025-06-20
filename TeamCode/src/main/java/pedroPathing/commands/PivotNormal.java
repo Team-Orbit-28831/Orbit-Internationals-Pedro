@@ -1,29 +1,34 @@
 package pedroPathing.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.CascadeSlides;
+import pedroPathing.SUBSYSTEMS.Claw;
 
-public class SlidesSample extends CommandBase {
+public class PivotNormal extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-    private final CascadeSlides cascadeSlidesE;
 
-    public SlidesSample(CascadeSlides subsystem) {
-        cascadeSlidesE = subsystem;
+    private final CascadePivot pivot;
 
-        addRequirements(subsystem);
+
+    public PivotNormal(CascadePivot subsystem2) {
+        pivot = subsystem2;
+
+        addRequirements(subsystem2);
     }
 
     @Override
     public void initialize() {
-        cascadeSlidesE.slideLowChamber();
+        //turn outtake on
+        pivot.pivotNormal();
     }
 
     @Override
     public boolean isFinished() {
         return true;
     }
+
+
 }
-
-
 
 

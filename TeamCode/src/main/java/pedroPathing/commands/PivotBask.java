@@ -17,7 +17,7 @@ public class PivotBask extends CommandBase {
     @Override
     public void initialize() {
         //turn outtake on
-        cascadePivotE.setPivotTarget(-1800);
+        cascadePivotE.pivotGoToBask();
     }
 
     @Override

@@ -15,6 +15,13 @@ public class CascadePivot implements Subsystem {
     public DcMotorEx pivotMotorLeft;   // vertical
     public DcMotorEx pivotMotorRight;  // extension
 
+    public int baskHeight = -2100;
+    public int normalHeight = -550;
+
+    public int collectionHeight = -400;
+
+    public int longNormalHeight = -600;
+
     // PIDF coefficients
     public static double p = 0.003;
     public static double i = 0;
@@ -39,17 +46,17 @@ public class CascadePivot implements Subsystem {
         pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+//        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         pivotMotorLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         pivotMotorRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         timer.reset();
 
-
-        pivotMotorLeft.setPower(0);
-        pivotMotorRight.setPower(0);
+//
+//        pivotMotorLeft.setPower(0);
+//        pivotMotorRight.setPower(0);
         this.telemetry = telemetry;
     }
 
@@ -96,6 +103,42 @@ public class CascadePivot implements Subsystem {
         pivotMotorLeft.setPower(0);
         pivotMotorRight.setPower(0);
     }
+
+    public void pivotGoToBask() {
+        pivotMotorLeft.setTargetPosition(baskHeight);
+        pivotMotorRight.setTargetPosition(baskHeight);
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setPower(0.7);
+        pivotMotorLeft.setPower(0.7);
+    }
+
+    public void pivotToCollect() {
+        pivotMotorLeft.setTargetPosition(collectionHeight);
+        pivotMotorRight.setTargetPosition(collectionHeight);
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setPower(0.7);
+        pivotMotorLeft.setPower(0.7);
+    }
+    public void pivotNormal() {
+        pivotMotorLeft.setTargetPosition(normalHeight);
+        pivotMotorRight.setTargetPosition(normalHeight);
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setPower(0.7);
+        pivotMotorLeft.setPower(0.7);
+    }
+
+    public void pivotLongNormal() {
+        pivotMotorLeft.setTargetPosition(longNormalHeight);
+        pivotMotorRight.setTargetPosition(longNormalHeight);
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setPower(0.7);
+        pivotMotorLeft.setPower(0.7);
+    }
+
 
     public int getAveragePosition() {
         return (pivotMotorLeft.getCurrentPosition() + pivotMotorRight.getCurrentPosition()) / 2;

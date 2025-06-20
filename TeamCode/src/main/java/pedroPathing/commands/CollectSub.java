@@ -1,24 +1,26 @@
 package pedroPathing.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.Claw;
 
-public class ClawDown extends CommandBase {
+public class CollectSub extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final Claw claw;
+    private final CascadePivot pivot;
 
 
-    public ClawDown(Claw subsystem) {
-        claw = subsystem;
+    public CollectSub(Claw subsystem1, CascadePivot subsystem2) {
+        claw = subsystem1;
+        pivot = subsystem2;
 
-        addRequirements(subsystem);
+        addRequirements(subsystem1, subsystem2);
     }
 
     @Override
     public void initialize() {
         //turn outtake on
-        claw.midpoint();
-        claw.downClaw();
+        pivot.pivotToCollect();
     }
 
     @Override

@@ -17,6 +17,7 @@ public class ClawUp extends CommandBase {
     @Override
     public void initialize() {
         //turn outtake on
+        claw.midpoint();
         claw.upClaw();
     }
 

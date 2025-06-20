@@ -10,14 +10,19 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import pedroPathing.commands.SlidesHighBask;
+
 
 public class CascadeSlides implements Subsystem {
 
     // Slide positions
-    private static final double SLIDES_LOW_CHAMBER = 0;
-    private static final double SLIDES_HIGH_CHAMBER = 250;
+    private static final int SLIDES_LOW_CHAMBER = 0;
+    private static final int SLIDES_HIGH_CHAMBER = 250;
     private static final int SLIDES_LOW_BASKET = 215;
-    private static final double SLIDES_HIGH_BASKET = 700;
+    private static final int SLIDES_HIGH_BASKET = 730;
+
+    private static final int SLIDES_SUB = 550;
+
     public static DcMotorEx slideMotor;
 
     private ElapsedTime timer = new ElapsedTime();
@@ -57,15 +62,40 @@ public class CascadeSlides implements Subsystem {
     }
 
     public void slideHighBasket() {
-        setSlideTarget(SLIDES_HIGH_BASKET);
+        slideMotor.setTargetPosition(SLIDES_HIGH_BASKET);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.7);
     }
 
+    public void slideSubShort() {
+        slideMotor.setTargetPosition(SLIDES_SUB);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.7);
+    }
+
+    public void slideSubLong() {
+        slideMotor.setTargetPosition(SLIDES_HIGH_BASKET);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.7);
+    }
+
+
     public void slideHighChamber() {
-        setSlideTarget(SLIDES_HIGH_CHAMBER);
+        slideMotor.setTargetPosition(SLIDES_HIGH_CHAMBER);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.7);
+    }
+
+    public void retract() {
+        slideMotor.setTargetPosition(0);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.7);
     }
 
     public void slideLowChamber() {
-        setSlideTarget(SLIDES_LOW_CHAMBER);
+        slideMotor.setTargetPosition(SLIDES_LOW_CHAMBER);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.7);
     }
 
 
