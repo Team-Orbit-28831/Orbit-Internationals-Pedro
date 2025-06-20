@@ -73,6 +73,7 @@ public class justvision extends OpMode {
         // Update vision
         vision.periodic();
 
+
         // Handle path following state machine
         if (inTeleopMode) {
             // Normal teleop control
