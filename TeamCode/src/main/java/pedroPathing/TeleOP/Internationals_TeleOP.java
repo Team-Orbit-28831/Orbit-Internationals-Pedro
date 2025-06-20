@@ -1,15 +1,22 @@
 package pedroPathing.TeleOP;
 
+import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import pedroPathing.SUBSYSTEMS.Drivetrain;
 import pedroPathing.SUBSYSTEMS.CascadeSlides;
 import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.Claw;
+import pedroPathing.SUBSYSTEMS.Vision;
 import pedroPathing.commands.PivotBask;
+import pedroPathing.commands.SampleAutoAlign;
 import pedroPathing.commands.SlidesHighBask;
 import pedroPathing.commands.SlidesLowBask;
 import pedroPathing.commands.PivotSample;
+import pedroPathing.commands.SlidesSample;
+import pedroPathing.constants.FConstants;
+import pedroPathing.constants.LConstants;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -22,6 +29,7 @@ public class Internationals_TeleOP extends LinearOpMode {
     private CascadeSlides cascadeSlides;
     private CascadePivot cascadePivot;
     private Claw claw;
+    private Vision vision;
 
 
 
@@ -32,31 +40,46 @@ public class Internationals_TeleOP extends LinearOpMode {
     private static final double CLAW_DOWN = 0.1;
     private static final double CLAW_FLAT = 0.0;
     private static final double CLAW_DIA = 0.75;
+    private Follower follower;
+    private final Pose startPose = new Pose(0, 0, 0);
 
     private GamepadEx driver;
     private GamepadEx operator;
+    private Follower Follower;
 
     @Override
     public void runOpMode() {
         drivetrain = new Drivetrain();
         cascadeSlides = new CascadeSlides(hardwareMap, telemetry);
         cascadePivot = new CascadePivot(hardwareMap, telemetry);
+        vision = new Vision(hardwareMap,telemetry);
         claw = new Claw();
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
         claw.init(hardwareMap);
+        vision.initializeCamera();
 
         telemetry.addData("Status", "Initialized");
         telemetry.addData("Slides pos", cascadeSlides.getCurrentPosition());
         telemetry.addData("Pivot pos", cascadePivot.getAveragePosition());
         telemetry.update();
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower.setStartingPose(startPose);
+
+
 
         waitForStart();
 
         while (opModeIsActive()) {
             // drivetrain
 //            drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+            Pose currentPose = follower.getPose();
+            follower.startTeleopDrive();
+            follower.update();
+
             CommandScheduler.getInstance().run();
+
 
             driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
                     new SequentialCommandGroup(
@@ -76,6 +99,13 @@ public class Internationals_TeleOP extends LinearOpMode {
                             new SlidesHighBask(cascadeSlides)
                     )
 
+            );
+            driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+                    new SequentialCommandGroup(
+
+                        new SlidesSample(cascadeSlides),
+                        new SampleAutoAlign(cascadeSlides,cascadePivot,vision,Follower,currentPose,claw)
+                    )
             );
 
 //            if (gamepad1.x) {

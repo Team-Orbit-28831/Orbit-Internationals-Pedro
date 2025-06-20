@@ -71,7 +71,7 @@ public class CascadeSlides implements Subsystem {
         pidf.setPIDF(p, i, d, f);
 
         double pos = slideMotor.getCurrentPosition();
-        double power = pidf.calculate(pos, target);
+        double power = (pidf.calculate(pos, target));
 
 
         telemetry.addData("Target Position", target);
@@ -80,7 +80,7 @@ public class CascadeSlides implements Subsystem {
         telemetry.update();
 
 
-        slideMotor.setPower(power);
+        slideMotor.setPower(power/2);
 
     }
 
