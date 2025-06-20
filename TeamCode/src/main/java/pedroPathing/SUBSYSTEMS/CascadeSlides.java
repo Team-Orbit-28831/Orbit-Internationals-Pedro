@@ -16,7 +16,7 @@ public class CascadeSlides implements Subsystem {
     // Slide positions
     private static final double SLIDES_LOW_CHAMBER = 0;
     private static final double SLIDES_HIGH_CHAMBER = 250;
-    private static final double SLIDES_LOW_BASKET = 215;
+    private static final int SLIDES_LOW_BASKET = 215;
     private static final double SLIDES_HIGH_BASKET = 700;
     public static DcMotorEx slideMotor;
 
@@ -34,10 +34,10 @@ public class CascadeSlides implements Subsystem {
         slideMotor = hardwareMap.get(DcMotorEx.class, "cascade");
         slideMotor.setDirection(DcMotorEx.Direction.REVERSE);
         slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        slideMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//        slideMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        slideMotor.setPower(0);
+//        slideMotor.setPower(0);
         this.telemetry = telemetry;
         timer.reset();
     }
@@ -49,7 +49,11 @@ public class CascadeSlides implements Subsystem {
     }
 
     public void slideLowBasket() {
-        setSlideTarget(SLIDES_LOW_BASKET);
+//        setSlideTarget(SLIDES_LOW_BASKET);
+        slideMotor.setTargetPosition(SLIDES_LOW_BASKET);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.7);
+
     }
 
     public void slideHighBasket() {

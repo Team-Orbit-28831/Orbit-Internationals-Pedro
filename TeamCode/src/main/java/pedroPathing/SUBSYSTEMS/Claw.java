@@ -1,11 +1,12 @@
 package pedroPathing.SUBSYSTEMS;
 
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Claw {
+public class Claw implements Subsystem {
 
     private Servo clawServo;
     private Servo clawRotServo;
@@ -14,8 +15,13 @@ public class Claw {
     private Limelight3A camera;
 
     private boolean isClawOpen = false;
-    private double clawOpenPosition = 0.8;
-    private double clawClosedPosition = 0.2;
+
+    private static final double CLAW_OPEN = 0.6;
+    private static final double CLAW_CLOSED = 0.2;
+    private static final double CLAW_UP = 0.1;
+    private static final double CLAW_DOWN = 0.7;
+    private static final double CLAW_FLAT = 0.0;
+    private static final double CLAW_DIA = 0.75;
 
     private ElapsedTime timer = new ElapsedTime();
 
@@ -30,11 +36,11 @@ public class Claw {
     // Control claw open/close based on buttons (example)
     public void controlClaw(boolean openButton, boolean closeButton) {
         if (openButton) {
-            clawServo.setPosition(clawOpenPosition);
+            clawServo.setPosition(CLAW_OPEN);
             isClawOpen = true;
             timer.reset();
         } else if (closeButton) {
-            clawServo.setPosition(clawClosedPosition);
+            clawServo.setPosition(CLAW_CLOSED);
             isClawOpen = false;
             timer.reset();
         }
@@ -66,6 +72,30 @@ public class Claw {
     public void setServoPosUD(double val) {
         clawUDServo.setPosition(val);
 
+    }
+
+    public void openClaw() {
+        clawServo.setPosition(CLAW_OPEN);
+    }
+
+    public void closeClaw() {
+        clawServo.setPosition(CLAW_CLOSED);
+    }
+
+    public void upClaw() {
+        clawUDServo.setPosition(CLAW_UP);
+    }
+
+    public void downClaw() {
+        clawUDServo.setPosition(CLAW_DOWN);
+    }
+
+    public void defaultPos() {
+        clawRotServo.setPosition(CLAW_FLAT);
+    }
+
+    public void diagPos() {
+        clawRotServo.setPosition(CLAW_DIA);
     }
 
     public void setServoPosRot(double val) {

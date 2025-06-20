@@ -1,5 +1,7 @@
 package pedroPathing.TeleOP;
 
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,8 +11,10 @@ import pedroPathing.SUBSYSTEMS.CascadeSlides;
 import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.Claw;
 import pedroPathing.SUBSYSTEMS.Vision;
+import pedroPathing.commands.ClawDown;
+import pedroPathing.commands.ClawOpen;
 import pedroPathing.commands.PivotBask;
-import pedroPathing.commands.SampleAutoAlign;
+//import pedroPathing.commands.SampleAutoAlign;
 import pedroPathing.commands.SlidesHighBask;
 import pedroPathing.commands.SlidesLowBask;
 import pedroPathing.commands.PivotSample;
@@ -33,19 +37,11 @@ public class Internationals_TeleOP extends LinearOpMode {
 
 
 
-    // Claw positions
-    private static final double CLAW_OPEN = 0.8;
-    private static final double CLAW_CLOSED = 0.2;
-    private static final double CLAW_UP = 0.9;
-    private static final double CLAW_DOWN = 0.1;
-    private static final double CLAW_FLAT = 0.0;
-    private static final double CLAW_DIA = 0.75;
     private Follower follower;
     private final Pose startPose = new Pose(0, 0, 0);
 
     private GamepadEx driver;
     private GamepadEx operator;
-    private Follower Follower;
 
     @Override
     public void runOpMode() {
@@ -78,15 +74,21 @@ public class Internationals_TeleOP extends LinearOpMode {
             follower.startTeleopDrive();
             follower.update();
 
+
             CommandScheduler.getInstance().run();
 
 
             driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
                     new SequentialCommandGroup(
-//                            new cascadePivot.setPos(0)
-//                            new cascadeSlides.moveSlidesTo(200)
-                            new PivotSample(cascadePivot),
-                            new SlidesLowBask(cascadeSlides)
+                            new ParallelCommandGroup(
+                                    new ClawDown(claw),
+                                    new PivotSample(cascadePivot)
+                            ),
+                            new ClawOpen(claw),
+                            new WaitCommand(200),
+                            new SlidesLowBask(cascadeSlides),
+                            new WaitCommand(100)
+
                     )
 
             );
@@ -95,18 +97,18 @@ public class Internationals_TeleOP extends LinearOpMode {
                     new SequentialCommandGroup(
 //                            new cascadePivot.setPos(0)
 //                            new cascadeSlides.moveSlidesTo(200)
-                            new PivotBask(cascadePivot),
-                            new SlidesHighBask(cascadeSlides)
+                            new PivotBask(cascadePivot)
+//                            new SlidesHighBask(cascadeSlides)
                     )
 
             );
-            driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-                    new SequentialCommandGroup(
-
-                        new SlidesSample(cascadeSlides),
-                        new SampleAutoAlign(cascadeSlides,cascadePivot,vision,Follower,currentPose,claw)
-                    )
-            );
+//            driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+//                    new SequentialCommandGroup(
+//
+//                        new SlidesSample(cascadeSlides),
+//                        new SampleAutoAlign(cascadeSlides,cascadePivot,vision,follower,currentPose,claw)
+//                    )
+//            );
 
 //            if (gamepad1.x) {
 //                cascadeSlides.setPower(0.5);

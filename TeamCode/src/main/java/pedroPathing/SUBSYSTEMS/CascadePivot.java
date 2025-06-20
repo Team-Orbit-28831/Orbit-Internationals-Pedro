@@ -25,6 +25,7 @@ public class CascadePivot implements Subsystem {
     public PIDFController pidfRight  = new PIDFController(p, i, d, f);
     public static double target;
 
+    public double maxPivot = -1800;
     private final ElapsedTime timer = new ElapsedTime();
 
     public CascadePivot(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -38,8 +39,8 @@ public class CascadePivot implements Subsystem {
         pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         pivotMotorLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         pivotMotorRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -81,6 +82,12 @@ public class CascadePivot implements Subsystem {
 
         pivotMotorLeft.setPower(leftpower);
         pivotMotorRight.setPower(rightpower);
+
+        if (getAveragePosition() >= maxPivot) {
+            stop();
+        }
+
+
     }
 
 
