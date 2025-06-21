@@ -152,4 +152,5 @@ public class CascadePivot implements Subsystem {
     public void periodic() {
         autoUpdatePivot();
     }
+
 }
