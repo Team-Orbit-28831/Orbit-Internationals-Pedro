@@ -15,8 +15,8 @@ public class OnlyDriveTrain extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        drivetrain = new Drivetrain();
-        drivetrain.init(hardwareMap);
+//        drivetrain = new Drivetrain();
+//        drivetrain.init(hardwareMap);
         leftEncoder = hardwareMap.get(DcMotorEx.class, "leftEncoder");
         leftEncoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         leftEncoder.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);

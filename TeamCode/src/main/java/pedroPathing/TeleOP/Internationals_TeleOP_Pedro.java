@@ -70,7 +70,7 @@ public class Internationals_TeleOP_Pedro extends LinearOpMode {
         follower.setStartingPose(startPose);
 
         // Initialize subsystems
-        drivetrain = new Drivetrain();
+//        drivetrain = new Drivetrain();
         cascadeSlides = new CascadeSlides(hardwareMap, telemetry);
         cascadePivot = new CascadePivot(hardwareMap, telemetry);
         claw = new Claw();

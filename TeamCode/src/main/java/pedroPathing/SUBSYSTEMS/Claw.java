@@ -18,8 +18,8 @@ public class Claw implements Subsystem {
 
     private static final double CLAW_OPEN = 0;
     private static final double CLAW_CLOSED = 0.9;
-    private static final double CLAW_UP = 0.4;
-    private static final double CLAW_DOWN = 0;
+    private static final double CLAW_UP = 0.0;
+    private static final double CLAW_DOWN = 1.0;
     private static final double CLAW_FLAT = 0.0;
     private static final double CLAW_DIA = 0.75;
 
@@ -29,7 +29,7 @@ public class Claw implements Subsystem {
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         clawRotServo = hardwareMap.get(Servo.class, "clawRot");
         clawUDServo = hardwareMap.get(Servo.class, "clawUD");
-        clawUDServo.setDirection(Servo.Direction.REVERSE);
+//        clawUDServo.setDirection(Servo.Direction.REVERSE);
 
 
     }

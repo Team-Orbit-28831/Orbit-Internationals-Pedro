@@ -4,13 +4,15 @@
     import com.qualcomm.robotcore.hardware.HardwareMap;
     import com.qualcomm.robotcore.util.ElapsedTime;
 
+    import org.firstinspires.ftc.robotcore.external.Telemetry;
+
     public class Drivetrain {
         private DcMotor frontLeftDrive = null;
         private DcMotor frontRightDrive = null;
         private DcMotor backLeftDrive = null;
         private DcMotor backRightDrive = null;
 
-        private final double drive_sens = 2.0;  // Drive sensitivity
+        private final double drive_sens = 1.0;  // Drive sensitivity
 
         // PID variables
         private final double integralSum = 0;
@@ -20,7 +22,7 @@
         private final double Kd = 0.05; // Derivative gain
         private final ElapsedTime timer = new ElapsedTime();
 
-        public void init(HardwareMap hardwareMap) {
+        public Drivetrain(HardwareMap hardwareMap, Telemetry telemetry) {
             frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");   // CONTROL: port 0
             backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");     // CONTROL: port 1
             backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");       // CONTROL: port 2
@@ -32,9 +34,12 @@
             frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
             backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
+
             // Reset timer
             timer.reset();
         }
+
+
 
         public void drive(double leftY, double leftX, double rightX) {
             // Forward/Backward and Strafing

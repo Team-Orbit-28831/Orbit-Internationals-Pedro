@@ -15,7 +15,7 @@ public class CascadePivot implements Subsystem {
     public DcMotorEx pivotMotorLeft;   // vertical
     public DcMotorEx pivotMotorRight;  // extension
 
-    public int baskHeight = -2100;
+    public int baskHeight = -2200;
     public int normalHeight = -550;
 
     public int collectionHeight = -400;

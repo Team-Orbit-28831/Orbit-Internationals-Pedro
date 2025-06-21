@@ -39,7 +39,7 @@ public class Internationals_TeleOP extends LinearOpMode {
     private CascadePivot cascadePivot;
     private Claw claw;
     private Vision vision;
-
+//    private DriveTrainBasic driveTrainBasic;
 
 
     private Follower follower;
@@ -50,7 +50,8 @@ public class Internationals_TeleOP extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        drivetrain = new Drivetrain();
+        drivetrain = new Drivetrain(hardwareMap, telemetry);
+//        driveTrainBasic = new DriveTrainBasic();
         cascadeSlides = new CascadeSlides(hardwareMap, telemetry);
         cascadePivot = new CascadePivot(hardwareMap, telemetry);
         vision = new Vision(hardwareMap,telemetry);
@@ -73,12 +74,13 @@ public class Internationals_TeleOP extends LinearOpMode {
 
         while (opModeIsActive()) {
             // drivetrain
-//            drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
-            Pose currentPose = follower.getPose();
-            follower.startTeleopDrive();
-            follower.update();
+//            driveTrainBasic.drive(-gamepad2.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x,1);
+//            follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+//            Pose currentPose = follower.getPose();
+//            follower.startTeleopDrive();
+//            follower.update();
 
+            drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
             CommandScheduler.getInstance().run();
 
@@ -93,9 +95,12 @@ public class Internationals_TeleOP extends LinearOpMode {
                     new SequentialCommandGroup(
                             new ClawOpen(claw),
                             new WaitCommand(300),
-                            new ClawDown(claw),
                             new PivotSampleShort(cascadePivot),
-                            new SlidesSampleShort(cascadeSlides)
+                            new SlidesSampleShort(cascadeSlides),
+                            new ClawDown(claw),
+                            new ClawOpen(claw)
+//                            new ClawDown(claw)
+
                     )
             );
 
@@ -135,11 +140,13 @@ public class Internationals_TeleOP extends LinearOpMode {
             // retract
             driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                     new SequentialCommandGroup(
+                            new ClawClose(claw),
                             new PivotNormal(cascadePivot),
                             new WaitCommand(300),
+                            new ClawUp(claw),
                             new SlideRetract(cascadeSlides),
                             new PivotBask(cascadePivot),
-                            new ClawUp(claw)
+                            new ClawClose(claw)
 
                     )
 
