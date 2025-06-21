@@ -140,6 +140,9 @@ public class CascadePivot implements Subsystem {
     }
 
     public void setPower(double val) {
+        pivotMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+
         pivotMotorLeft.setPower(val);
         pivotMotorRight.setPower(val);
     }

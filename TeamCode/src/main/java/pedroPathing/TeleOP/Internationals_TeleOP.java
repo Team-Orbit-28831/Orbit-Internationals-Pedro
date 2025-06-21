@@ -166,6 +166,7 @@ public class Internationals_TeleOP extends LinearOpMode {
                     new ClawOpen(claw)
             );
 
+            // moves slide up and down manually
             operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                     new m_slidesdown(cascadeSlides)
             );
@@ -174,6 +175,7 @@ public class Internationals_TeleOP extends LinearOpMode {
                    new m_slidesup(cascadeSlides)
             );
 
+            // move pivot up and down manually
             operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
                     new m_pivotup(cascadePivot)
             );
