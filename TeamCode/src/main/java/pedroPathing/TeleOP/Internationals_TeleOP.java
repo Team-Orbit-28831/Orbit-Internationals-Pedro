@@ -24,6 +24,10 @@ import pedroPathing.commands.SlideRetract;
 import pedroPathing.commands.SlideSampleLong;
 import pedroPathing.commands.SlidesHighBask;
 import pedroPathing.commands.SlidesSampleShort;
+import pedroPathing.commands.m_pivotdown;
+import pedroPathing.commands.m_pivotup;
+import pedroPathing.commands.m_slidesdown;
+import pedroPathing.commands.m_slidesup;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -161,6 +165,23 @@ public class Internationals_TeleOP extends LinearOpMode {
             driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                     new ClawOpen(claw)
             );
+
+            operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+                    new m_slidesdown(cascadeSlides)
+            );
+
+            operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+                   new m_slidesup(cascadeSlides)
+            );
+
+            operator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
+                    new m_pivotup(cascadePivot)
+            );
+
+            operator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
+                    new m_pivotdown(cascadePivot)
+            );
+
 //            driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
 //                    new SequentialCommandGroup(
 //

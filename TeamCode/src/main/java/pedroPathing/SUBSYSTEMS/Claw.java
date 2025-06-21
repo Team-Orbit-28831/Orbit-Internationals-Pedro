@@ -112,6 +112,8 @@ public class Claw implements Subsystem {
         return clawUDServo.getPosition();
     }
 
+    public double getCurrentOCPos() {return clawRotServo.getPosition();}
 
+    public double getCurrentROTPos() {return clawRotServo.getPosition();}
 
 }

@@ -66,9 +66,8 @@ public class CascadePivot implements Subsystem {
         pidfLeft.setSetPoint(target);
         pidfRight.setSetPoint(target);
         autoUpdatePivot();
-
-//
     }
+
     private Telemetry telemetry;
 
     public void autoUpdatePivot() {
@@ -86,18 +85,13 @@ public class CascadePivot implements Subsystem {
         telemetry.addData("Current Position Right", rightpos);
         telemetry.update();
 
-
         pivotMotorLeft.setPower(leftpower);
         pivotMotorRight.setPower(rightpower);
 
         if (getAveragePosition() >= maxPivot) {
             stop();
         }
-
-
     }
-
-
 
     public void stop() {
         pivotMotorLeft.setPower(0);
@@ -121,6 +115,7 @@ public class CascadePivot implements Subsystem {
         pivotMotorRight.setPower(0.7);
         pivotMotorLeft.setPower(0.7);
     }
+
     public void pivotNormal() {
         pivotMotorLeft.setTargetPosition(normalHeight);
         pivotMotorRight.setTargetPosition(normalHeight);
@@ -148,6 +143,7 @@ public class CascadePivot implements Subsystem {
         pivotMotorLeft.setPower(val);
         pivotMotorRight.setPower(val);
     }
+
     @Override
     public void periodic() {
         autoUpdatePivot();

@@ -1,5 +1,7 @@
 package pedroPathing.Autonomous;
 
+import android.graphics.LinearGradient;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
@@ -14,7 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
-@Autonomous(name = "auto test 2 - slower", group = "Autonomous")
+@Autonomous(name = "auto test 2", group = "Autonomous")
 public class autonomous_test_2 extends OpMode {
 
     private Follower follower;
@@ -50,7 +52,7 @@ public class autonomous_test_2 extends OpMode {
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .setPathEndVelocityConstraint(10) // Slow down first segment to 20 in/sec
+                .setPathEndVelocityConstraint(10)
                 .addPath(
                         new BezierLine(
                                 new Point(84.898, 25.604, Point.CARTESIAN),
@@ -58,7 +60,7 @@ public class autonomous_test_2 extends OpMode {
                         )
                 )
                 .setTangentHeadingInterpolation()
-                .setPathEndVelocityConstraint(10) // Even slower for middle segment
+                .setPathEndVelocityConstraint(10)
                 .addPath(
                         new BezierCurve(
                                 new Point(126.866, 26.759, Point.CARTESIAN),
@@ -67,7 +69,7 @@ public class autonomous_test_2 extends OpMode {
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
-                .setPathEndVelocityConstraint(10) // Slowest for final approach
+                .setPathEndVelocityConstraint(10)
                 .build();
     }
 

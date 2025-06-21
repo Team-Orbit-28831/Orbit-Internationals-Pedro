@@ -79,7 +79,6 @@ public class CascadeSlides implements Subsystem {
         slideMotor.setPower(0.7);
     }
 
-
     public void slideHighChamber() {
         slideMotor.setTargetPosition(SLIDES_HIGH_CHAMBER);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -98,7 +97,6 @@ public class CascadeSlides implements Subsystem {
         slideMotor.setPower(0.7);
     }
 
-
     private static Telemetry telemetry;
 
     public static void autoUpdateSlides() {
@@ -107,21 +105,16 @@ public class CascadeSlides implements Subsystem {
         double pos = slideMotor.getCurrentPosition();
         double power = (pidf.calculate(pos, target));
 
-
         telemetry.addData("Target Position", target);
         telemetry.addData("Current Position Left", pos);
 
         telemetry.update();
 
-
         slideMotor.setPower(power/2);
-
     }
-
 
     public void stop() {
         slideMotor.setPower(0);
-
     }
 
     public int getCurrentPosition() {
@@ -135,6 +128,5 @@ public class CascadeSlides implements Subsystem {
     @Override
     public void periodic() {
         autoUpdateSlides();
-
     }
 }
