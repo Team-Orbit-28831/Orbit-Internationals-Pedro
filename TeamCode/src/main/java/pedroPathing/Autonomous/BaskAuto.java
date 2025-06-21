@@ -79,84 +79,79 @@ public class BaskAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0: // Start - preload claw and set arm position
-//                claw.closeClaw();
-//                slides.retract();
+                claw.closeClaw();
+                slides.retract();
                 setPathState(1);
                 break;
 
             case 1: // Wait for initial actions to complete
-                setPathState(2);
-//                if (claw.getCurrentCommand().isFinished() && slides.getCurrentCommand().isFinished()) {
-
-//                }
+                if (claw.getCurrentCommand().isFinished() && slides.getCurrentCommand().isFinished()) {
+                    setPathState(2);
+                }
                 break;
 
             case 2: // Move to first sample
-//                follower.followPath(pathToSample);
+                follower.followPath(pathToSample);
                 setPathState(3);
                 break;
 
             case 3: // Wait for path completion and prepare intake
-//                if (!follower.isBusy()) {
-//                    new SlidesHighBask(slides);
-//                    new PivotBask(pivot);
-                setPathState(4);
-//                }
+                if (!follower.isBusy()) {
+                    new SlidesHighBask(slides);
+                    new PivotBask(pivot);
+                    setPathState(4);
+                }
                 break;
 
             case 4: // Wait for mechanisms to get in position
-                setPathState(5);
-//                if (slides.getCurrentCommand().isFinished() && slides.getCurrentCommand().isFinished()) {
-
-//                }
+                if (slides.getCurrentCommand().isFinished() && slides.getCurrentCommand().isFinished()) {
+                    setPathState(5);
+                }
                 break;
 
             case 5: // Intake sample
-//                claw.openClaw();
-//                actionTimer.resetTimer();
+                claw.openClaw();
+                actionTimer.resetTimer();
                 setPathState(6);
                 break;
 
             case 6: // Wait for intake completion
-                setPathState(7);
-//                if (actionTimer.getElapsedTimeSeconds() > 1.0) { // Adjust timing as needed
-//                    claw.closeClaw();
-//                    slides.retract();
+                if (actionTimer.getElapsedTimeSeconds() > 1.0) { // Adjust timing as needed
+                    claw.closeClaw();
+                    slides.retract();
 
-//                }
+                }
                 break;
 
             case 7: // Move to basket
-//                follower.followPath(pathToBasket);
+                follower.followPath(pathToBasket);
                 new PivotBask(pivot);
                 setPathState(8);
                 break;
 
             case 8: // Wait for path and arm movement
-                setPathState(9);
-//                if (!follower.isBusy() && slides.getCurrentCommand().isFinished()) {
-
-//                }
+                if (!follower.isBusy() && slides.getCurrentCommand().isFinished()) {
+                    setPathState(9);
+                }
                 break;
 
             case 9: // Score in basket
-//                claw.openClaw();
-//                actionTimer.resetTimer();
+                claw.openClaw();
+                actionTimer.resetTimer();
                 setPathState(10);
                 break;
 
             case 10: // Wait for scoring completion
-//                if (actionTimer.getElapsedTimeSeconds() > 0.5) {
-//                    claw.closeClaw();
-//                    new PivotNormal(pivot);
+                if (actionTimer.getElapsedTimeSeconds() > 0.5) {
+                    claw.closeClaw();
+                    new PivotNormal(pivot);
                 setPathState(11);
-//                }
+                }
                 break;
 
             case 11: // Continue to next sample or end
                 setPathState(-1); // End autonomous
                 break;
-
             default:
                 // Autonomous complete
                 break;
@@ -196,8 +191,8 @@ public class BaskAuto extends OpMode {
     @Override
     public void stop() {
         // Stop all subsystems when autonomous ends
-//        pivot.stop();
-//        slides.stop();
+        pivot.stop();
+        slides.stop();
 //        claw.stop();
     }
 }

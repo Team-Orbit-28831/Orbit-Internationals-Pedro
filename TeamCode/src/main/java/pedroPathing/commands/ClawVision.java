@@ -13,7 +13,6 @@ public class ClawVision extends CommandBase {
         claw = subsystem;
         vision = subsystem1;
 
-
         addRequirements(subsystem,subsystem1);
     }
 
