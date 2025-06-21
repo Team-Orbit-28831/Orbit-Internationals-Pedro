@@ -1,24 +1,22 @@
 package pedroPathing.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
+import pedroPathing.SUBSYSTEMS.CascadePivot;
 
-import pedroPathing.SUBSYSTEMS.Claw;
-
-public class ClawDiagonal extends CommandBase {
-    @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-    private final Claw claw;
+public class PivotReset extends CommandBase {
+    private final CascadePivot pivot;
 
 
-    public ClawDiagonal(Claw subsystem) {
-        claw = subsystem;
+    public PivotReset(CascadePivot subsystem) {
+        pivot = subsystem;
 
         addRequirements(subsystem);
     }
 
+
     @Override
     public void initialize() {
         //turn outtake on
-        claw.diagPos();
-
+        pivot.pivotReset();
     }
 
     @Override
@@ -26,7 +24,4 @@ public class ClawDiagonal extends CommandBase {
         return true;
     }
 
-
 }
-
-

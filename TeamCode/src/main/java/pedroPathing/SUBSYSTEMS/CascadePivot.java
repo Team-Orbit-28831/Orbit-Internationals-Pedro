@@ -22,6 +22,9 @@ public class CascadePivot implements Subsystem {
 
     public int longNormalHeight = -600;
 
+    public int resetHeight = -300;
+
+
     // PIDF coefficients
     public static double p = 0.003;
     public static double i = 0;
@@ -125,6 +128,14 @@ public class CascadePivot implements Subsystem {
         pivotMotorLeft.setPower(0.7);
     }
 
+    public void pivotReset() {
+        pivotMotorLeft.setTargetPosition(resetHeight);
+        pivotMotorRight.setTargetPosition(resetHeight);
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setPower(0.7);
+        pivotMotorLeft.setPower(0.7);
+    }
     public void pivotLongNormal() {
         pivotMotorLeft.setTargetPosition(longNormalHeight);
         pivotMotorRight.setTargetPosition(longNormalHeight);

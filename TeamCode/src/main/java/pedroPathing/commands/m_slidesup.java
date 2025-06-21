@@ -21,6 +21,7 @@ public class m_slidesup extends CommandBase {
         slides.setPower(0.25);
     }
 
+
     @Override
     public boolean isFinished() {
         slides.setPower(0);

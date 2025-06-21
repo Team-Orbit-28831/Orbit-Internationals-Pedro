@@ -19,7 +19,7 @@ public class CascadeSlides implements Subsystem {
     private static final int SLIDES_LOW_CHAMBER = 0;
     private static final int SLIDES_HIGH_CHAMBER = 250;
     private static final int SLIDES_LOW_BASKET = 215;
-    private static final int SLIDES_HIGH_BASKET = 730;
+    private static final int SLIDES_HIGH_BASKET = 790;
 
     private static final int SLIDES_SUB = 550;
 
@@ -122,6 +122,7 @@ public class CascadeSlides implements Subsystem {
     }
 
     public void setPower(double val) {
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotor.setPower(val);
     }
 

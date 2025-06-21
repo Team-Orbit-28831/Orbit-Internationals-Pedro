@@ -20,6 +20,7 @@ public class m_pivotdown extends CommandBase {
         cascadePivotE.setPower(-1);
     }
 
+
     @Override
     public boolean isFinished() {
         cascadePivotE.setPower(0);

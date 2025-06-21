@@ -3,12 +3,12 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import pedroPathing.SUBSYSTEMS.Claw;
 
-public class ClawDown extends CommandBase {
+public class ClawPerp extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final Claw claw;
 
 
-    public ClawDown(Claw subsystem) {
+    public ClawPerp(Claw subsystem) {
         claw = subsystem;
 
         addRequirements(subsystem);
@@ -17,10 +17,8 @@ public class ClawDown extends CommandBase {
     @Override
     public void initialize() {
         //turn outtake on
-        claw.midpoint();
-        claw.downClaw();
+        claw.perpPos();
     }
-
 
     @Override
     public boolean isFinished() {
