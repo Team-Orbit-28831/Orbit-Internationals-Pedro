@@ -1,5 +1,6 @@
 package pedroPathing.commands;
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import pedroPathing.SUBSYSTEMS.CascadeSlides;
 import pedroPathing.SUBSYSTEMS.Vision;
@@ -7,6 +8,7 @@ import pedroPathing.SUBSYSTEMS.Vision;
 public class VisionSlides extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final CascadeSlides cascadeSlidesE;
+    private double target = 0;
 
     private final Vision vision;
     public VisionSlides(CascadeSlides subsystem, Vision subsystem1) {
@@ -19,8 +21,14 @@ public class VisionSlides extends CommandBase {
 
     @Override
     public void initialize() {
-        double distance = (vision.getDistance()/25.4)+400;
-        cascadeSlidesE.setSlideTarget(distance);
+        if (vision.getDistance() != 0) {
+             target = vision.getDistance();
+        }
+
+        cascadeSlidesE.setSlideTarget((int)Math.round(target+120));
+
+
+
     }
 
     @Override

@@ -47,10 +47,10 @@ public class CascadeSlides implements Subsystem {
         timer.reset();
     }
 
-    public void setSlideTarget(double target) {
-        CascadeSlides.target = target;
-        pidf.setSetPoint(target);
-        autoUpdateSlides();
+    public void setSlideTarget(int target) {
+        slideMotor.setTargetPosition(target);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.7);
     }
 
     public void slideLowBasket() {

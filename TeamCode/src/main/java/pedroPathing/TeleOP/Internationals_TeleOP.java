@@ -28,6 +28,7 @@ import pedroPathing.commands.SlideRetract;
 import pedroPathing.commands.SlideSampleLong;
 import pedroPathing.commands.SlidesHighBask;
 import pedroPathing.commands.SlidesSampleShort;
+import pedroPathing.commands.VisionSlides;
 import pedroPathing.commands.m_pivotdown;
 import pedroPathing.commands.m_pivotup;
 import pedroPathing.commands.m_slidesdown;
@@ -113,11 +114,13 @@ public class Internationals_TeleOP extends LinearOpMode {
                             new ClawOpen(claw),
                             new WaitCommand(300),
                             new PivotSampleShort(cascadePivot),
-                            new SlidesSampleShort(cascadeSlides),
+                            new VisionSlides(cascadeSlides,vision),
                             new ClawOpen(claw),
                             new ClawFlat(claw),
 
-            new ClawDown(claw)
+                            new ClawDown(claw)
+
+
 //                            new ClawDown(claw)
 
                     )
@@ -149,7 +152,7 @@ public class Internationals_TeleOP extends LinearOpMode {
                     new SequentialCommandGroup(
                           new CollectSub(claw, cascadePivot),
                             new ClawClose(claw),
-                            new WaitCommand(300)
+                            new WaitCommand(50)
                     )
 
             );
@@ -179,7 +182,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                     new SequentialCommandGroup(
                             new ClawClose(claw),
-                            new WaitCommand(300),
+                            new WaitCommand(50),
                             new ClawUp(claw),
                             new SlideRetract(cascadeSlides),
 //                            new PivotSampleShort(cascadePivot),
@@ -241,7 +244,6 @@ public class Internationals_TeleOP extends LinearOpMode {
             operator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                     new ClawPerp(claw)
             );
-
 
 //            operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
 //                    new ClawDiagonal(claw)
