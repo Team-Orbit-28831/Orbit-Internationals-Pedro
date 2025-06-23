@@ -12,7 +12,7 @@
         private DcMotor backLeftDrive = null;
         private DcMotor backRightDrive = null;
 
-        private final double drive_sens = 1.0;  // Drive sensitivity
+
 
         // PID variables
         private final double integralSum = 0;
@@ -41,7 +41,7 @@
 
 
 
-        public void drive(double leftY, double leftX, double rightX) {
+        public void drive(double leftY, double leftX, double rightX,double drive_sens) {
             // Forward/Backward and Strafing
             double frontLeftPower = leftY + leftX + rightX;
             double frontRightPower = leftY - leftX - rightX;

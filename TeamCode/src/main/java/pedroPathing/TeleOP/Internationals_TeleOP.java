@@ -11,7 +11,7 @@ import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.Claw;
 import pedroPathing.SUBSYSTEMS.Vision;
 import pedroPathing.commands.ClawClose;
-import pedroPathing.commands.ClawDiagonal;
+//import pedroPathing.commands.ClawDiagonal;
 import pedroPathing.commands.ClawDown;
 import pedroPathing.commands.ClawFlat;
 import pedroPathing.commands.ClawOpen;
@@ -20,6 +20,7 @@ import pedroPathing.commands.ClawUp;
 import pedroPathing.commands.CollectSub;
 //import pedroPathing.commands.SampleAutoAlign;
 import pedroPathing.commands.PivotBask;
+import pedroPathing.commands.PivotReset;
 import pedroPathing.commands.PivotSampleLong;
 import pedroPathing.commands.PivotNormal;
 import pedroPathing.commands.PivotSampleShort;
@@ -86,8 +87,13 @@ public class Internationals_TeleOP extends LinearOpMode {
 //            Pose currentPose = follower.getPose();
 //            follower.startTeleopDrive();
 //            follower.update();
+            drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x,1);
+            if (gamepad1.left_trigger>0.1){
+                drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x,2);
+            }
 
-            drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
+
 
             CommandScheduler.getInstance().run();
 
@@ -100,18 +106,29 @@ public class Internationals_TeleOP extends LinearOpMode {
             //vision.setDetectionColor(Vision.SampleColor.RED);
 
             // short sample collection
+
+
             driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
                     new SequentialCommandGroup(
                             new ClawOpen(claw),
                             new WaitCommand(300),
                             new PivotSampleShort(cascadePivot),
                             new SlidesSampleShort(cascadeSlides),
-                            new ClawDown(claw),
                             new ClawOpen(claw),
-                            new ClawFlat(claw)
+                            new ClawFlat(claw),
+
+            new ClawDown(claw)
 //                            new ClawDown(claw)
 
                     )
+            );
+
+            operator.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(
+                    new ClawUp(claw)
+            );
+
+            operator.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(
+                    new ClawDown(claw)
             );
 
             // long sample collection
@@ -166,7 +183,7 @@ public class Internationals_TeleOP extends LinearOpMode {
                             new ClawUp(claw),
                             new SlideRetract(cascadeSlides),
 //                            new PivotSampleShort(cascadePivot),
-                            new PivotNormal(cascadePivot),
+//                            new PivotNormal(cascadePivot),
                             new PivotBask(cascadePivot),
                             new ClawClose(claw)
 
@@ -174,15 +191,15 @@ public class Internationals_TeleOP extends LinearOpMode {
 
             );
 
-//            reset
+//          reset
             driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                     new SequentialCommandGroup(
                             new ClawClose(claw),
                             new ClawUp(claw),
                             new SlideRetract(cascadeSlides),
 //                            new PivotSampleShort(cascadePivot),
-                            new PivotNormal(cascadePivot),
-                            new PivotBask(cascadePivot),
+                            new PivotReset(cascadePivot),
+//                            new PivotBask(cascadePivot),
                             new ClawClose(claw)
 
                     )
@@ -195,9 +212,9 @@ public class Internationals_TeleOP extends LinearOpMode {
             );
 
             // open claw
-            driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-                    new ClawOpen(claw)
-            );
+//            driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+//                    new ClawOpen(claw)
+//            );
 
             // moves slide up and down manually
             operator.getGamepadButton(GamepadKeys.Button.X).whileHeld(
@@ -225,9 +242,10 @@ public class Internationals_TeleOP extends LinearOpMode {
                     new ClawPerp(claw)
             );
 
-            operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-                    new ClawDiagonal(claw)
-            );
+
+//            operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+//                    new ClawDiagonal(claw)
+//            );
 
 //            driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
 //                    new SequentialCommandGroup(

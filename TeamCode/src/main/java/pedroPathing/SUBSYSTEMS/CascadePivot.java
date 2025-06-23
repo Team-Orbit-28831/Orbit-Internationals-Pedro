@@ -15,10 +15,10 @@ public class CascadePivot implements Subsystem {
     public DcMotorEx pivotMotorLeft;   // vertical
     public DcMotorEx pivotMotorRight;  // extension
 
-    public int baskHeight = -2200;
-    public int normalHeight = -550;
+    public int baskHeight = -2471;
+    public int normalHeight = -569;
 
-    public int collectionHeight = -400;
+    public int collectionHeight = -433;
 
     public int longNormalHeight = -600;
 
@@ -148,6 +148,16 @@ public class CascadePivot implements Subsystem {
 
     public int getAveragePosition() {
         return (pivotMotorLeft.getCurrentPosition() + pivotMotorRight.getCurrentPosition()) / 2;
+    }
+
+    public void goUp(){
+            pivotMotorLeft.setTargetPosition(pivotMotorLeft.getCurrentPosition()-50);
+            pivotMotorRight.setTargetPosition(pivotMotorRight.getCurrentPosition()-50);
+            pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            pivotMotorRight.setPower(0.7);
+            pivotMotorLeft.setPower(0.7);
+
     }
 
     public void setPower(double val) {

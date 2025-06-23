@@ -1,8 +1,12 @@
 package pedroPathing.Autonomous;
 
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
@@ -10,8 +14,13 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import pedroPathing.commands.ClawClose;
+import pedroPathing.commands.ClawDown;
+import pedroPathing.commands.ClawOpen;
+import pedroPathing.commands.ClawUp;
 import pedroPathing.commands.PivotBask;
 import pedroPathing.commands.PivotNormal;
+import pedroPathing.commands.SlideRetract;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -22,11 +31,11 @@ import pedroPathing.SUBSYSTEMS.Drivetrain;
 import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.CascadeSlides;
 
-@Autonomous(name = "Basket Auto - Blue", group = "Autonomous")
+@Autonomous(name = "Basket Auto - RED", group = "Autonomous")
 public class BaskAuto extends OpMode {
 
     private Follower follower;
-    private Timer pathTimer, actionTimer;
+    private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
     private CascadePivot pivot;
@@ -34,15 +43,28 @@ public class BaskAuto extends OpMode {
     private Claw claw;
 
     // Starting pose
-    private final Pose startPose = new Pose(9.757, 84.983, Math.toRadians(0));
+    private final Pose startPose = new Pose(135.52941176470588, 59.10160427807486, Math.toRadians(180));
+
+//    Score Pose
+    private final Pose scorePose = new Pose(126.48128342245988, 17.1336898395722, Math.toRadians(135));
+
+    private final Pose pickup1Pose = new Pose(100.29946524064171, 22.33155080213903, Math.toRadians(0));
+
+    private final Pose parkPose = new Pose(133.79679144385028, 133.79679144385028, Math.toRadians(0));
 
     // Paths
-    private PathChain pathToSample, pathToBasket, pathToNextSample, etc;
+    private Path scorePreload, park;
+
+    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3, parkPath;
+
+//    private PathChain pathToSample, pathToBasket, pathToNextSample, etc;
 
     @Override
     public void init() {
         pathTimer = new Timer();
         actionTimer = new Timer();
+        opmodeTimer = new Timer();
+        opmodeTimer.resetTimer();
         Constants.setConstants(FConstants.class, LConstants.class);
 
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
@@ -59,102 +81,80 @@ public class BaskAuto extends OpMode {
     }
 
     public void buildPaths() {
-        pathToSample = follower.pathBuilder()
-                .addPath(new BezierLine(
-                        new Point(9.757, 84.983, Point.CARTESIAN),
-                        new Point(10.203, 125.519, Point.CARTESIAN)
-                ))
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(280))
+
+        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scorePose)));
+        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
+
+        grabPickup1 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scorePose), new Point(pickup1Pose)))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
                 .build();
 
-        pathToBasket = follower.pathBuilder()
-                .addPath(new BezierLine(
-                        new Point(10.203, 125.519, Point.CARTESIAN),
-                        new Point(33.112, 23.679, Point.CARTESIAN)
-                ))
-                .setLinearHeadingInterpolation(Math.toRadians(280), Math.toRadians(180))
+        parkPath = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickup1Pose), new Point(parkPose)))
+                .setLinearHeadingInterpolation(pickup1Pose.getHeading(), parkPose.getHeading())
                 .build();
     }
 
+
+//        pathToSample = follower.pathBuilder()
+//                .addPath(new BezierLine(
+//                        new Point(9.757, 84.983, Point.CARTESIAN),
+//                        new Point(10.203, 125.519, Point.CARTESIAN)
+//                ))
+//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(280))
+//                .build();
+//
+//        pathToBasket = follower.pathBuilder()
+//                .addPath(new BezierLine(
+//                        new Point(10.203, 125.519, Point.CARTESIAN),
+//                        new Point(33.112, 23.679, Point.CARTESIAN)
+//                ))
+//                .setLinearHeadingInterpolation(Math.toRadians(280), Math.toRadians(180))
+//                .build();
+//    }
+
     public void autonomousPathUpdate() {
         switch (pathState) {
-            case 0: // Start - preload claw and set arm position
-                claw.closeClaw();
-                slides.retract();
+            case 0:
+                follower.followPath(scorePreload);
                 setPathState(1);
                 break;
+            case 1:
 
-            case 1: // Wait for initial actions to complete
-                if (claw.getCurrentCommand().isFinished() && slides.getCurrentCommand().isFinished()) {
+                if(!follower.isBusy()) {
+                    follower.followPath(grabPickup1,true);
                     setPathState(2);
                 }
                 break;
+            case 2:
+                if(!follower.isBusy()) {
+                    follower.followPath(scorePreload);
+                    new SequentialCommandGroup(
+                            new ClawClose(claw),
+                            new WaitCommand(300),
+                            new PivotBask(pivot),
+                            new ClawUp(claw),
+                            new SlidesHighBask(slides),
+                            new ClawDown(claw),
+                            new ClawOpen(claw),
+                            new WaitCommand(300),
+                            new ClawClose(claw),
+                            new ClawUp(claw),
+                            new SlideRetract(slides),
+                            new PivotNormal(pivot)
 
-            case 2: // Move to first sample
-                follower.followPath(pathToSample);
+//                        new PivotSampleShort(cascadePivot),
+//                        new PivotNormal(cascadePivot),
+                    );
+                }
                 setPathState(3);
                 break;
-
-            case 3: // Wait for path completion and prepare intake
-                if (!follower.isBusy()) {
-                    new SlidesHighBask(slides);
-                    new PivotBask(pivot);
+            case 3:
+                if(!follower.isBusy()) {
+                    follower.followPath(parkPath, true);
                     setPathState(4);
                 }
-                break;
-
-            case 4: // Wait for mechanisms to get in position
-                if (slides.getCurrentCommand().isFinished() && slides.getCurrentCommand().isFinished()) {
-                    setPathState(5);
-                }
-                break;
-
-            case 5: // Intake sample
-                claw.openClaw();
-                actionTimer.resetTimer();
-                setPathState(6);
-                break;
-
-            case 6: // Wait for intake completion
-                if (actionTimer.getElapsedTimeSeconds() > 1.0) { // Adjust timing as needed
-                    claw.closeClaw();
-                    slides.retract();
-
-                }
-                break;
-
-            case 7: // Move to basket
-                follower.followPath(pathToBasket);
-                new PivotBask(pivot);
-                setPathState(8);
-                break;
-
-            case 8: // Wait for path and arm movement
-                if (!follower.isBusy() && slides.getCurrentCommand().isFinished()) {
-                    setPathState(9);
-                }
-                break;
-
-            case 9: // Score in basket
-                claw.openClaw();
-                actionTimer.resetTimer();
-                setPathState(10);
-                break;
-
-            case 10: // Wait for scoring completion
-                if (actionTimer.getElapsedTimeSeconds() > 0.5) {
-                    claw.closeClaw();
-                    new PivotNormal(pivot);
-                setPathState(11);
-                }
-                break;
-
-            case 11: // Continue to next sample or end
-                setPathState(-1); // End autonomous
-                break;
-            default:
-                // Autonomous complete
-                break;
         }
     }
 
@@ -186,6 +186,17 @@ public class BaskAuto extends OpMode {
         telemetry.addData("Claw Rotation state", claw.getCurrentROTPos());
 
         telemetry.update();
+    }
+
+    @Override
+    public void init_loop(){}
+
+    @Override
+
+    public void start (){
+    opmodeTimer.resetTimer();
+    new ClawClose(claw);
+    setPathState(0);
     }
 
     @Override
