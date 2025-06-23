@@ -23,9 +23,11 @@ public class VisionSlides extends CommandBase {
     public void initialize() {
         if (vision.getDistance() != 0) {
              target = vision.getDistance();
+        } else {
+            target = 250;
         }
 
-        cascadeSlidesE.setSlideTarget((int)Math.round(target+120));
+        cascadeSlidesE.setSlideTarget((int)Math.round(target+130));
 
 
 

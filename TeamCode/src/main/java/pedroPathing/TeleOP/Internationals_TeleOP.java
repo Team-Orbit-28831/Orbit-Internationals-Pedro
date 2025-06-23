@@ -17,6 +17,7 @@ import pedroPathing.commands.ClawFlat;
 import pedroPathing.commands.ClawOpen;
 import pedroPathing.commands.ClawPerp;
 import pedroPathing.commands.ClawUp;
+import pedroPathing.commands.ClawVision;
 import pedroPathing.commands.CollectSub;
 //import pedroPathing.commands.SampleAutoAlign;
 import pedroPathing.commands.PivotBask;
@@ -109,17 +110,35 @@ public class Internationals_TeleOP extends LinearOpMode {
             // short sample collection
 
 
+            driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
+                    new SequentialCommandGroup(
+                            new ClawOpen(claw),
+                            new WaitCommand(300),
+                            new PivotSampleShort(cascadePivot),
+                            new ClawVision(claw, vision),
+                            new VisionSlides(cascadeSlides,vision),
+                            new ClawOpen(claw),
+//                            new ClawFlat(claw)
+
+                            new ClawDown(claw),
+                            new WaitCommand(150)
+
+
+
+//                            new ClawDown(claw)
+
+                    )
+            );
+
             driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
                     new SequentialCommandGroup(
                             new ClawOpen(claw),
                             new WaitCommand(300),
                             new PivotSampleShort(cascadePivot),
-                            new VisionSlides(cascadeSlides,vision),
+                            new SlidesSampleShort(cascadeSlides),
                             new ClawOpen(claw),
                             new ClawFlat(claw),
-
                             new ClawDown(claw)
-
 
 //                            new ClawDown(claw)
 
