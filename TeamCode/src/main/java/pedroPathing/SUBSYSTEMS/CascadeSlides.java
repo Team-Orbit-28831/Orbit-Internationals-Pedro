@@ -57,26 +57,26 @@ public class CascadeSlides implements Subsystem {
 //        setSlideTarget(SLIDES_LOW_BASKET);
         slideMotor.setTargetPosition(SLIDES_LOW_BASKET);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.7);
+        slideMotor.setPower(0.9);
 
     }
 
     public void slideHighBasket() {
         slideMotor.setTargetPosition(SLIDES_HIGH_BASKET);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.7);
+        slideMotor.setPower(0.9);
     }
 
     public void slideSubShort() {
         slideMotor.setTargetPosition(SLIDES_SUB);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.7);
+        slideMotor.setPower(1);
     }
 
     public void slideSubLong() {
         slideMotor.setTargetPosition(SLIDES_HIGH_BASKET);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.7);
+        slideMotor.setPower(1);
     }
 
     public void slideHighChamber() {

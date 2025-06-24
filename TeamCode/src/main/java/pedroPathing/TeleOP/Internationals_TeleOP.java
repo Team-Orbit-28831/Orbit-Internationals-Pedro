@@ -188,7 +188,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             // collect
             operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                     new SequentialCommandGroup(
-                          new CollectSub(claw, cascadePivot),
+                            new CollectSub(claw, cascadePivot),
                             new ClawClose(claw),
                             new WaitCommand(50)
                     )
@@ -268,7 +268,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             );
 
             operator.getGamepadButton(GamepadKeys.Button.Y).whileHeld(
-                   new m_slidesup(cascadeSlides)
+                    new m_slidesup(cascadeSlides)
             );
 
             // move pivot up and down manually
