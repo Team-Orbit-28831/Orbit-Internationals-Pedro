@@ -1,5 +1,6 @@
 package pedroPathing.TeleOP;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
@@ -16,6 +17,7 @@ import pedroPathing.commands.ClawDown;
 import pedroPathing.commands.ClawFlat;
 import pedroPathing.commands.ClawOpen;
 import pedroPathing.commands.ClawPerp;
+import pedroPathing.commands.ClawStraight;
 import pedroPathing.commands.ClawUp;
 import pedroPathing.commands.ClawVision;
 import pedroPathing.commands.CollectSub;
@@ -129,6 +131,20 @@ public class Internationals_TeleOP extends LinearOpMode {
 
                     )
             );
+            // grap spec from wall
+            driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
+                    new SequentialCommandGroup(
+
+                            new ClawClose(claw),
+                            new InstantCommand(()->claw.upClaw())
+
+
+
+
+//                            new ClawDown(claw)
+
+                    )
+            );
 
             driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
                     new SequentialCommandGroup(
@@ -233,10 +249,15 @@ public class Internationals_TeleOP extends LinearOpMode {
                     new SlidesHighBask(cascadeSlides)
             );
 
-            // open claw
-//            driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-//                    new ClawOpen(claw)
-//            );
+            // Collect Spec
+            driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+                    new SequentialCommandGroup(
+                        new ClawOpen(claw),
+                        new ClawFlat(claw),
+                        new ClawStraight(claw),
+                        new PivotNormal(cascadePivot)
+                   )
+            );
 
             // moves slide up and down manually
             operator.getGamepadButton(GamepadKeys.Button.X).whileHeld(
