@@ -17,7 +17,7 @@ public class PivotSpecDrop extends CommandBase {
     @Override
     public void initialize() {
         //turn outtake on
-        cascadePivotE.pivotGoToBask();
+        cascadePivotE.pivotDepositSpec();
     }
 
     @Override
