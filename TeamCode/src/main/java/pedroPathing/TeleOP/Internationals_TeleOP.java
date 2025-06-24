@@ -27,6 +27,7 @@ import pedroPathing.commands.PivotReset;
 import pedroPathing.commands.PivotSampleLong;
 import pedroPathing.commands.PivotNormal;
 import pedroPathing.commands.PivotSampleShort;
+import pedroPathing.commands.PivotSpecDrop;
 import pedroPathing.commands.SlideRetract;
 import pedroPathing.commands.SlideSampleLong;
 import pedroPathing.commands.SlidesHighBask;
@@ -136,7 +137,9 @@ public class Internationals_TeleOP extends LinearOpMode {
                     new SequentialCommandGroup(
 
                             new ClawClose(claw),
-                            new InstantCommand(()->claw.upClaw())
+                            new PivotSpecDrop(cascadePivot),
+                            new WaitCommand(100),
+                            new ClawUp(claw)
 
 
 

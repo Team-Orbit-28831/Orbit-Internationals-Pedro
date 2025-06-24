@@ -21,6 +21,7 @@ public class CascadePivot implements Subsystem {
     public int collectionHeight = -433;
 
     public int longNormalHeight = -600;
+    public int specHeight = -1500;
 
     public int resetHeight = -300;
 
@@ -104,6 +105,14 @@ public class CascadePivot implements Subsystem {
     public void pivotGoToBask() {
         pivotMotorLeft.setTargetPosition(baskHeight);
         pivotMotorRight.setTargetPosition(baskHeight);
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setPower(0.7);
+        pivotMotorLeft.setPower(0.7);
+    }
+    public void pivotDepositSpec(){
+        pivotMotorLeft.setTargetPosition(specHeight);
+        pivotMotorRight.setTargetPosition(specHeight);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setPower(0.7);
