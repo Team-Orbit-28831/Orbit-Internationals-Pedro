@@ -1,5 +1,7 @@
 package pedroPathing.TeleOP;
 
+import android.transition.Slide;
+
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.pedropathing.follower.Follower;
@@ -25,6 +27,7 @@ import pedroPathing.commands.CollectSub;
 import pedroPathing.commands.MidClaw;
 import pedroPathing.commands.PivotBask;
 import pedroPathing.commands.PivotReset;
+import pedroPathing.commands.PivotResetEncoder;
 import pedroPathing.commands.PivotSampleLong;
 import pedroPathing.commands.PivotNormal;
 import pedroPathing.commands.PivotSampleShort;
@@ -92,7 +95,18 @@ public class Internationals_TeleOP extends LinearOpMode {
 //        cascadePivot.pivotMotorLeft.setPower(0.7);
 //        cascadePivot.pivotMotorRight.setPower(0.7);
 
+        SequentialCommandGroup initSequence = new SequentialCommandGroup(
+                new ClawUp(claw),
+                new ClawClose(claw),
+                new SlideRetract(cascadeSlides),
+                new WaitCommand(20),
+                new PivotReset(cascadePivot),
+                new WaitCommand(1300),
+                new PivotResetEncoder(cascadePivot)
+        );
 
+// Schedule the command to run
+        CommandScheduler.getInstance().schedule(initSequence);
 
         waitForStart();
 
@@ -153,6 +167,7 @@ public class Internationals_TeleOP extends LinearOpMode {
 
                     )
             );
+
             // grap spec from wall
             driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
                     new SequentialCommandGroup(
@@ -287,6 +302,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             // slides to high bask
             driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                     new SlidesHighBask(cascadeSlides)
+
             );
 
             // Collect Spec

@@ -94,6 +94,7 @@ public class Vision extends SubsystemBase {
         double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
         double distanceMM = (TARGET_HEIGHT - CAMERA_HEIGHT) / Math.tan(angleToGoalRadians);
         return Math.abs(distanceMM) - sampleToRobotDistance;
+
     }
 
     // Get the strafe
@@ -108,6 +109,7 @@ public class Vision extends SubsystemBase {
     public Double getTurnServoDegree() {
         if (result == null) {
             return null;
+
         }
         return result.getPythonOutput()[3];
     }
@@ -129,6 +131,7 @@ public class Vision extends SubsystemBase {
                   telemetry.addData("Tx", result.getTx());
                   telemetry.addData("Ty", result.getTy());
                   telemetry.addData("Ta", result.getTa());
+
                   telemetry.update();
         }
     }
