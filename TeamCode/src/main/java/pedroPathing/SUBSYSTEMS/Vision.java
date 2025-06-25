@@ -100,7 +100,7 @@ public class Vision extends SubsystemBase {
     public double getStrafeOffset() {
         double tx = getTx(0);
         if (tx != 0) {
-            return tx * strafeConversionFactor - cameraStrafeToBot;
+            return tx * strafeConversionFactor - cameraStrafeToBot / 25.4;
         }
         return 0;
     }

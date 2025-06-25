@@ -31,8 +31,8 @@ import pedroPathing.SUBSYSTEMS.Drivetrain;
 import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.CascadeSlides;
 
-@Autonomous(name = "Old Basket Auto", group = "Autonomous")
-public class BaskAuto extends OpMode {
+@Autonomous(name = "Basket Auto - RED", group = "Autonomous")
+public class NEW_BaskAuto extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -43,14 +43,14 @@ public class BaskAuto extends OpMode {
     private Claw claw;
 
     // Starting pose
-    private final Pose startPose = new Pose(135.72192513368984, 60.83422459893048, Math.toRadians(180));
+    private final Pose startPose = new Pose(134.37433155080214, 48.1283422459893, Math.toRadians(0));
 
     // Score Pose
-    private final Pose scorePose = new Pose(126.48128342245988, 17.1336898395722, Math.toRadians(135));
+    private final Pose scorePose = new Pose(127.05882352941177, 19.25133689839572, Math.toRadians(-45));
 
-    private final Pose pickup1Pose = new Pose(100.29946524064171, 22.33155080213903, Math.toRadians(0));
+    private final Pose pickup1Pose = new Pose(97.79679144385028, 37.540106951871664, Math.toRadians(270));
 
-    private final Pose parkPose = new Pose(133.79679144385028, 133.79679144385028, Math.toRadians(0));
+    private final Pose parkPose = new Pose(131.10160427807486, 130.9090909090909, Math.toRadians(21));
 
     // Paths
     private Path scorePreload, park;
@@ -88,11 +88,13 @@ public class BaskAuto extends OpMode {
         grabPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(scorePose), new Point(pickup1Pose)))
                 .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
+                .setPathEndVelocityConstraint(10)
                 .build();
 
         parkPath = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(pickup1Pose), new Point(parkPose)))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), parkPose.getHeading())
+                .setPathEndVelocityConstraint(10)
                 .build();
     }
 
@@ -120,41 +122,41 @@ public class BaskAuto extends OpMode {
                 follower.followPath(scorePreload);
                 setPathState(1);
                 break;
-            case 1:
-
-                if(!follower.isBusy()) {
-                    follower.followPath(grabPickup1,true);
-                    setPathState(2);
-                }
-                break;
-            case 2:
-                if(!follower.isBusy()) {
-                    follower.followPath(scorePreload);
-                    new SequentialCommandGroup(
-                            new ClawClose(claw),
-                            new WaitCommand(300),
-                            new PivotBask(pivot),
-                            new ClawUp(claw),
-                            new SlidesHighBask(slides),
-                            new ClawDown(claw),
-                            new ClawOpen(claw),
-                            new WaitCommand(300),
-                            new ClawClose(claw),
-                            new ClawUp(claw),
-                            new SlideRetract(slides),
-                            new PivotNormal(pivot)
-
-//                        new PivotSampleShort(cascadePivot),
-//                        new PivotNormal(cascadePivot),
-                    );
-                }
-                setPathState(3);
-                break;
-            case 3:
-                if(!follower.isBusy()) {
-                    follower.followPath(parkPath, true);
-                    setPathState(4);
-                }
+//            case 1:
+//
+//                if(!follower.isBusy()) {
+//                    follower.followPath(grabPickup1,true);
+//                    setPathState(2);
+//                }
+//                break;
+//            case 2:
+//                if(!follower.isBusy()) {
+//                    follower.followPath(scorePreload);
+//                    new SequentialCommandGroup(
+//                            new ClawClose(claw),
+//                            new WaitCommand(300),
+//                            new PivotBask(pivot),
+//                            new ClawUp(claw),
+//                            new SlidesHighBask(slides),
+//                            new ClawDown(claw),
+//                            new ClawOpen(claw),
+//                            new WaitCommand(300),
+//                            new ClawClose(claw),
+//                            new ClawUp(claw),
+//                            new SlideRetract(slides),
+//                            new PivotNormal(pivot)
+//
+////                        new PivotSampleShort(cascadePivot),
+////                        new PivotNormal(cascadePivot),
+//                    );
+//                }
+//                setPathState(3);
+//                break;
+//            case 3:
+//                if(!follower.isBusy()) {
+//                    follower.followPath(parkPath, true);
+//                    setPathState(4);
+//                }
         }
     }
 
@@ -194,9 +196,9 @@ public class BaskAuto extends OpMode {
     @Override
 
     public void start (){
-    opmodeTimer.resetTimer();
-    new ClawClose(claw);
-    setPathState(0);
+        opmodeTimer.resetTimer();
+        new ClawClose(claw);
+        setPathState(0);
     }
 
     @Override

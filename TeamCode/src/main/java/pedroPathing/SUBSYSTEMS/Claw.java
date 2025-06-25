@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Claw implements Subsystem {
-
     private Servo clawServo;
     private Servo clawRotServo;
     private Servo clawUDServo; //claw servo up down
