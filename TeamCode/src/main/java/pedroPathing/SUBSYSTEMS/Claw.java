@@ -20,11 +20,14 @@ public class Claw implements Subsystem {
     private static final double CLAW_CLOSED = 0.7;
     private static final double CLAW_UP = 1.0;
     private static final double CLAW_STRAIGHT = 0.7;
-    private static final double CLAW_DOWN = 0.33;
-    private static final double CLAW_FLAT = 0.0;
-    private static final double CLAW_DIA = 0.75;
+    private static final double CLAW_DOWN = 0.55;
 
-    private static final double CLAW_PERP = 0.75;
+    private static final double CLAW_MID = 0.85;
+
+    private static final double CLAW_FLAT = 0;
+    private static final double CLAW_DIA = 0.85;
+
+    private static final double CLAW_PERP = 0.65;
 
 
 
@@ -102,6 +105,11 @@ public class Claw implements Subsystem {
     public void downClaw() {
         clawUDServo.setPosition(CLAW_DOWN);
     }
+
+    public void midClaw() {
+        clawUDServo.setPosition(CLAW_MID);
+    }
+
 
 
     public void defaultPos() {

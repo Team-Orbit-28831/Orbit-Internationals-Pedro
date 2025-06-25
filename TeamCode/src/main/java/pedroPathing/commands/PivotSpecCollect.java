@@ -3,12 +3,12 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import pedroPathing.SUBSYSTEMS.CascadePivot;
 
-public class PivotSpecDrop extends CommandBase {
+public class PivotSpecCollect extends CommandBase {
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
     private final CascadePivot cascadePivotE;
 
 
-    public PivotSpecDrop(CascadePivot subsystem) {
+    public PivotSpecCollect(CascadePivot subsystem) {
         cascadePivotE = subsystem;
 
         addRequirements(subsystem);
@@ -17,7 +17,7 @@ public class PivotSpecDrop extends CommandBase {
     @Override
     public void initialize() {
         //turn outtake on
-        cascadePivotE.pivotDepositSpec();
+        cascadePivotE.pivotSpecCollect();
     }
 
     @Override

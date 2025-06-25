@@ -19,14 +19,16 @@ import pedroPathing.commands.ClawOpen;
 import pedroPathing.commands.ClawPerp;
 import pedroPathing.commands.ClawStraight;
 import pedroPathing.commands.ClawUp;
-import pedroPathing.commands.ClawVision;
+//import pedroPathing.commands.ClawVision;
 import pedroPathing.commands.CollectSub;
 //import pedroPathing.commands.SampleAutoAlign;
+import pedroPathing.commands.MidClaw;
 import pedroPathing.commands.PivotBask;
 import pedroPathing.commands.PivotReset;
 import pedroPathing.commands.PivotSampleLong;
 import pedroPathing.commands.PivotNormal;
 import pedroPathing.commands.PivotSampleShort;
+import pedroPathing.commands.PivotSpecCollect;
 import pedroPathing.commands.PivotSpecDrop;
 import pedroPathing.commands.SlideRetract;
 import pedroPathing.commands.SlideSampleLong;
@@ -44,6 +46,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name = "Internationals TeleOp Main", group = "Linear OpMode")
 public class Internationals_TeleOP extends LinearOpMode {
@@ -81,6 +84,14 @@ public class Internationals_TeleOP extends LinearOpMode {
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
 
+//        claw.upClaw();
+//        cascadePivot.pivotMotorLeft.setTargetPosition(1000);
+//        cascadePivot.pivotMotorRight.setTargetPosition(1000);
+//        cascadePivot.pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        cascadePivot.pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        cascadePivot.pivotMotorLeft.setPower(0.7);
+//        cascadePivot.pivotMotorRight.setPower(0.7);
+
 
 
         waitForStart();
@@ -93,9 +104,19 @@ public class Internationals_TeleOP extends LinearOpMode {
 //            follower.startTeleopDrive();
 //            follower.update();
             drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x,1);
-            if (gamepad1.left_trigger>0.1){
+            if (gamepad1.right_trigger>0.1){
                 drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x,2);
             }
+
+            if (gamepad1.left_trigger>0.1){
+
+                drivetrain.bDrive(gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x,1);
+            }
+
+//            if (gamepad2.left_trigger > 0.1) {
+//                cascadePivot.pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//                cascadePivot.pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//            }
 
 
 
@@ -118,7 +139,7 @@ public class Internationals_TeleOP extends LinearOpMode {
                             new ClawOpen(claw),
                             new WaitCommand(300),
                             new PivotSampleShort(cascadePivot),
-                            new ClawVision(claw, vision),
+//                            new ClawVision(claw, vision),
                             new VisionSlides(cascadeSlides,vision),
                             new ClawOpen(claw),
 //                            new ClawFlat(claw)
@@ -149,6 +170,23 @@ public class Internationals_TeleOP extends LinearOpMode {
                     )
             );
 
+            driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
+                    new SequentialCommandGroup(
+
+                            new ClawOpen(claw),
+                            new PivotSpecCollect(cascadePivot),
+                            new WaitCommand(100),
+                            new MidClaw(claw)
+
+
+
+
+//                            new ClawDown(claw)
+
+                    )
+            );
+
+
             driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
                     new SequentialCommandGroup(
                             new ClawOpen(claw),
@@ -175,7 +213,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             // long sample collection
             driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
                     new SequentialCommandGroup(
-                            new ClawOpen(claw),
+                            new ClawClose(claw),
                             new WaitCommand(300),
                             new ClawDown(claw),
                             new PivotSampleLong(cascadePivot),
@@ -189,8 +227,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                     new SequentialCommandGroup(
                             new CollectSub(claw, cascadePivot),
-                            new ClawClose(claw),
-                            new WaitCommand(50)
+                            new ClawClose(claw)
                     )
 
             );

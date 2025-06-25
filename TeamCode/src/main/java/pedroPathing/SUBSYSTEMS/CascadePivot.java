@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.arcrobotics.ftclib.controller.PIDFController;
@@ -15,15 +16,17 @@ public class CascadePivot implements Subsystem {
     public DcMotorEx pivotMotorLeft;   // vertical
     public DcMotorEx pivotMotorRight;  // extension
 
-    public int baskHeight = -2471;
-    public int normalHeight = -569;
+    public int baskHeight = -2999;
+    public int normalHeight = -701;
 
-    public int collectionHeight = -433;
+    public int collectionHeight = -581;
 
-    public int longNormalHeight = -600;
-    public int specHeight = -1500;
+    public int specDepositHeight = -2431;
 
-    public int resetHeight = -300;
+    public int longNormalHeight = -821;
+    public int specHeight = -1691;
+
+    public int resetHeight = -491;
 
 
     // PIDF coefficients
@@ -44,8 +47,8 @@ public class CascadePivot implements Subsystem {
         pivotMotorLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
         pivotMotorRight = hardwareMap.get(DcMotorEx.class, "pivotRight");
 
-        pivotMotorLeft.setDirection(DcMotorEx.Direction.FORWARD);
-        pivotMotorRight.setDirection(DcMotorEx.Direction.FORWARD);
+        pivotMotorLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        pivotMotorRight.setDirection(DcMotorEx.Direction.REVERSE);
 
         pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -110,9 +113,18 @@ public class CascadePivot implements Subsystem {
         pivotMotorRight.setPower(0.7);
         pivotMotorLeft.setPower(0.7);
     }
+
+    public void pivotSpecCollect() {
+        pivotMotorLeft.setTargetPosition(-711);
+        pivotMotorRight.setTargetPosition(-711);
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pivotMotorRight.setPower(0.7);
+        pivotMotorLeft.setPower(0.7);
+    }
     public void pivotDepositSpec(){
-        pivotMotorLeft.setTargetPosition(specHeight);
-        pivotMotorRight.setTargetPosition(specHeight);
+        pivotMotorLeft.setTargetPosition(specDepositHeight);
+        pivotMotorRight.setTargetPosition(specDepositHeight);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setPower(0.7);
@@ -153,7 +165,6 @@ public class CascadePivot implements Subsystem {
         pivotMotorRight.setPower(0.7);
         pivotMotorLeft.setPower(0.7);
     }
-
 
     public int getAveragePosition() {
         return (pivotMotorLeft.getCurrentPosition() + pivotMotorRight.getCurrentPosition()) / 2;

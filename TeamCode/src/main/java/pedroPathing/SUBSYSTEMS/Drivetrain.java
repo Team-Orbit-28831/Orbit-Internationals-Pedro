@@ -55,6 +55,20 @@
             backRightDrive.setPower(backRightPower / drive_sens);
         }
 
+        public void bDrive(double leftY, double leftX, double rightX,double drive_sens) {
+            // Forward/Backward and Strafing
+            double frontLeftPower = leftY - leftX - rightX;
+            double frontRightPower = leftY + leftX + rightX;
+            double backLeftPower = leftY + leftX - rightX;
+            double backRightPower = leftY - leftX + rightX;
+
+            // Apply sensitivity scaling
+            frontLeftDrive.setPower(frontLeftPower / drive_sens);
+            backLeftDrive.setPower(backLeftPower / drive_sens);
+            frontRightDrive.setPower(frontRightPower / drive_sens);
+            backRightDrive.setPower(backRightPower / drive_sens);
+        }
+
     //    public double PID(double reference, double state) {
     //        double error = reference - state;
     //        double dt = timer.seconds();  // Get elapsed time since last update
