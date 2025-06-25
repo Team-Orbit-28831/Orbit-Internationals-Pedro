@@ -5,10 +5,12 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.Point;
@@ -25,10 +27,15 @@ import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.CascadeSlides;
 import pedroPathing.SUBSYSTEMS.Claw;
 import pedroPathing.commands.ClawClose;
+import pedroPathing.commands.ClawDown;
+import pedroPathing.commands.ClawOpen;
 import pedroPathing.commands.ClawUp;
+import pedroPathing.commands.PivotBask;
+import pedroPathing.commands.PivotNormal;
 import pedroPathing.commands.PivotReset;
 import pedroPathing.commands.PivotResetEncoder;
 import pedroPathing.commands.SlideRetract;
+import pedroPathing.commands.SlidesHighBask;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -52,31 +59,60 @@ public class BlueBasketAuto extends OpMode {
 
     // Single path from generated code
     private PathChain line1;
+    private PathChain line2;
+
+    // REMOVED CONSTRUCTOR - FTC OpModes should not have custom constructors
+    // The FTC framework creates OpModes automatically
 
     @Override
     public void init() {
-        pathTimer = new Timer();
-        opmodeTimer = new Timer();
-        opmodeTimer.resetTimer();
+        try {
+            pathTimer = new Timer();
+            opmodeTimer = new Timer();
+            opmodeTimer.resetTimer();
 
-        // Initialize constants and pose updater like LocalizationTest
-        Constants.setConstants(FConstants.class, LConstants.class);
-        poseUpdater = new PoseUpdater(hardwareMap, FConstants.class, LConstants.class);
-        dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
+            // Initialize subsystems here instead of constructor
+            cascadeSlides = new CascadeSlides(hardwareMap, telemetry);
+            cascadePivot = new CascadePivot(hardwareMap, telemetry);
+            claw = new Claw();
+            claw.init(hardwareMap); // Don't forget to initialize the claw
 
-        // Initialize dashboard telemetry using MultipleTelemetry
-        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+            // Initialize constants and pose updater like LocalizationTest
+            Constants.setConstants(FConstants.class, LConstants.class);
+            poseUpdater = new PoseUpdater(hardwareMap, FConstants.class, LConstants.class);
+            dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
-        follower.setStartingPose(startPose);
-        poseUpdater.setStartingPose(startPose);
+            // Initialize dashboard telemetry using MultipleTelemetry
+            telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        buildPaths();
-        pathState = 0;
+            follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+            follower.setStartingPose(startPose);
+            poseUpdater.setStartingPose(startPose);
 
-        // Initial drawing
-        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
-        Drawing.sendPacket();
+            buildPaths();
+            CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ClawClose(claw)));
+            CommandScheduler.getInstance().run();
+
+
+            pathState = 0;
+
+            // Run initialization sequence like in your TeleOp
+
+
+            // Schedule and run the init sequence
+
+
+            // Initial drawing
+            Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
+            Drawing.sendPacket();
+
+            telemetryA.addData("Status", "Initialization Complete");
+            telemetryA.update();
+
+        } catch (Exception e) {
+            telemetry.addData("INIT ERROR", e.getMessage());
+            telemetry.update();
+        }
     }
 
     public void buildPaths() {
@@ -85,12 +121,21 @@ public class BlueBasketAuto extends OpMode {
         line1 = builder
                 .addPath(
                         new BezierCurve(
-                                new Point(134.526, 48.591, Point.CARTESIAN),
-                                new Point(101.408, 50.365, Point.CARTESIAN),
-                                new Point(126.457, 21.990, Point.CARTESIAN)
+                                new Point(134.615, 57.103, Point.CARTESIAN),
+                                new Point(105.708, 39.547, Point.CARTESIAN),
+                                new Point(126.989, 18.443, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-225))
+                .build();
+        line2 = builder
+                .addPath(
+                        new BezierLine(
+                                new Point(126.989, 18.443, Point.CARTESIAN),
+                                new Point(122.733, 23.941, Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(-235), Math.toRadians(-180))
                 .build();
     }
 
@@ -98,7 +143,10 @@ public class BlueBasketAuto extends OpMode {
         switch (pathState) {
             case 0:
                 // Follow the single path
+                CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ClawClose(claw),new ClawUp(claw),new PivotBask(cascadePivot)) );
                 follower.followPath(line1);
+
+
                 setPathState(1);
                 break;
             case 1:
@@ -110,19 +158,34 @@ public class BlueBasketAuto extends OpMode {
                     telemetryA.addData("Final Heading", Math.toDegrees(follower.getPose().getHeading()));
                     telemetryA.addData("Total Time", opmodeTimer.getElapsedTimeSeconds());
                     SequentialCommandGroup doBask = new SequentialCommandGroup(
-                            new ClawUp(claw),
+                            new ClawDown(claw),
                             new ClawClose(claw),
-                            new SlideRetract(cascadeSlides),
+                            new PivotBask(cascadePivot),
+
+                            new SlidesHighBask(cascadeSlides),
+                            new WaitCommand(1000),
+                            new ClawUp(claw),
+                            new WaitCommand(100),
+                            new ClawOpen(claw),
+
+                            new ClawUp(claw),
                             new WaitCommand(20),
-                            new PivotReset(cascadePivot),
-                            new WaitCommand(1300),
-                            new PivotResetEncoder(cascadePivot)
+                            new SlideRetract(cascadeSlides),
+                            new PivotNormal(cascadePivot)
+
+
+
+
+
                     );
+                    CommandScheduler.getInstance().schedule(doBask);
                     setPathState(2);
                 }
                 break;
             case 2:
                 // End state - path complete, keep showing completion message
+                CommandScheduler.getInstance().schedule(new WaitCommand(1000));
+                follower.followPath(line2);
                 telemetryA.addData("STATUS", "FINISHED - ROBOT AT DESTINATION");
                 break;
         }
@@ -136,52 +199,60 @@ public class BlueBasketAuto extends OpMode {
 
     @Override
     public void loop() {
-        // Update pose and dashboard tracking like LocalizationTest
-        poseUpdater.update();
-        dashboardPoseTracker.update();
+        try {
+            // Update pose and dashboard tracking like LocalizationTest
+            poseUpdater.update();
+            dashboardPoseTracker.update();
 
-        // Update Pedro Pathing
-        follower.update();
+            // Update Pedro Pathing
+            follower.update();
 
-        // Run autonomous state machine
-        autonomousPathUpdate();
-        // do commands n stuff
-        CommandScheduler.getInstance().run();
+            // Run autonomous state machine
+            autonomousPathUpdate();
+            // do commands n stuff
+            CommandScheduler.getInstance().run();
 
-        // Get current pose from pose updater (consistent with LocalizationTest)
-        Pose currentPose = poseUpdater.getPose();
+            // Get current pose from pose updater (consistent with LocalizationTest)
+            Pose currentPose = poseUpdater.getPose();
 
-        // Telemetry to both Driver Station and Dashboard using MultipleTelemetry
-        telemetryA.addData("=== PATH INFO ===", "");
-        telemetryA.addData("Path State", pathState);
-        telemetryA.addData("Is Busy", follower.isBusy());
-        telemetryA.addData("Path Timer", pathTimer.getElapsedTimeSeconds());
+            // Telemetry to both Driver Station and Dashboard using MultipleTelemetry
+            telemetryA.addData("=== PATH INFO ===", "");
+            telemetryA.addData("Path State", pathState);
+            telemetryA.addData("Is Busy", follower.isBusy());
+            telemetryA.addData("Path Timer", pathTimer.getElapsedTimeSeconds());
 
-        telemetryA.addData("=== ROBOT POSE ===", "");
-        telemetryA.addData("x", currentPose.getX());
-        telemetryA.addData("y", currentPose.getY());
-        telemetryA.addData("heading", currentPose.getHeading());
-        telemetryA.addData("total heading", poseUpdater.getTotalHeading());
+            telemetryA.addData("=== ROBOT POSE ===", "");
+            telemetryA.addData("x", currentPose.getX());
+            telemetryA.addData("y", currentPose.getY());
+            telemetryA.addData("heading", currentPose.getHeading());
+            telemetryA.addData("total heading", poseUpdater.getTotalHeading());
 
-        telemetryA.addData("=== TARGET ===", "");
-        telemetryA.addData("Target X", 126.457);
-        telemetryA.addData("Target Y", 21.990);
-        telemetryA.addData("Target Heading (deg)", -225);
-        telemetryA.update();
+            telemetryA.addData("=== TARGET ===", "");
+            telemetryA.addData("Target X", 126.457);
+            telemetryA.addData("Target Y", 21.990);
+            telemetryA.addData("Target Heading (deg)", -225);
+            telemetryA.update();
 
-        // Drawing for dashboard visualization (same as LocalizationTest)
-        Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
-        Drawing.drawRobot(currentPose, "#4CAF50");
-        Drawing.sendPacket();
+            // Drawing for dashboard visualization (same as LocalizationTest)
+            Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
+            Drawing.drawRobot(currentPose, "#4CAF50");
+            Drawing.sendPacket();
+
+        } catch (Exception e) {
+            telemetryA.addData("LOOP ERROR", e.getMessage());
+            telemetryA.update();
+        }
     }
 
     @Override
     public void init_loop() {
-        telemetryA.addData("Status", "Initialized - Ready to start");
-        telemetryA.addData("Starting X", startPose.getX());
-        telemetryA.addData("Starting Y", startPose.getY());
-        telemetryA.addData("Starting Heading", Math.toDegrees(startPose.getHeading()));
-        telemetryA.update();
+        if (telemetryA != null) {
+            telemetryA.addData("Status", "Initialized - Ready to start");
+            telemetryA.addData("Starting X", startPose.getX());
+            telemetryA.addData("Starting Y", startPose.getY());
+            telemetryA.addData("Starting Heading", Math.toDegrees(startPose.getHeading()));
+            telemetryA.update();
+        }
     }
 
     @Override
