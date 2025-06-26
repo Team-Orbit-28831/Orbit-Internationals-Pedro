@@ -32,6 +32,7 @@ import pedroPathing.commands.PivotSampleLong;
 import pedroPathing.commands.PivotNormal;
 import pedroPathing.commands.PivotSampleShort;
 import pedroPathing.commands.PivotSpecCollect;
+import pedroPathing.commands.PivotSpecDone;
 import pedroPathing.commands.PivotSpecDrop;
 import pedroPathing.commands.SlideRetract;
 import pedroPathing.commands.SlideSampleLong;
@@ -95,18 +96,18 @@ public class Internationals_TeleOP extends LinearOpMode {
 //        cascadePivot.pivotMotorLeft.setPower(0.7);
 //        cascadePivot.pivotMotorRight.setPower(0.7);
 
-        SequentialCommandGroup initSequence = new SequentialCommandGroup(
-                new ClawUp(claw),
-                new ClawClose(claw),
-                new SlideRetract(cascadeSlides),
-                new WaitCommand(20),
-                new PivotReset(cascadePivot),
-                new WaitCommand(1300),
-                new PivotResetEncoder(cascadePivot)
-        );
+//        SequentialCommandGroup initSequence = new SequentialCommandGroup(
+//                new ClawUp(claw),
+//                new ClawClose(claw),
+//                new SlideRetract(cascadeSlides),
+//                new WaitCommand(20),
+//                new PivotReset(cascadePivot),
+//                new WaitCommand(1300),
+//                new PivotResetEncoder(cascadePivot)
+//        );
 
 // Schedule the command to run
-        CommandScheduler.getInstance().schedule(initSequence);
+//        CommandScheduler.getInstance().schedule(initSequence);
 
         waitForStart();
 
@@ -117,6 +118,8 @@ public class Internationals_TeleOP extends LinearOpMode {
 //            Pose currentPose = follower.getPose();
 //            follower.startTeleopDrive();
 //            follower.update();
+
+
             drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x,1);
             if (gamepad1.right_trigger>0.1){
                 drivetrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x,2);
@@ -127,6 +130,17 @@ public class Internationals_TeleOP extends LinearOpMode {
                 drivetrain.bDrive(gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x,1);
             }
 
+            CommandScheduler.getInstance().run();
+
+
+            if (gamepad2.right_trigger>0.1){
+                new SequentialCommandGroup(
+                        new ClawDown(claw),
+                        new WaitCommand(500),
+                        new PivotSpecDone(cascadePivot)
+                );
+            }
+
 //            if (gamepad2.left_trigger > 0.1) {
 //                cascadePivot.pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 //                cascadePivot.pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -135,14 +149,13 @@ public class Internationals_TeleOP extends LinearOpMode {
 
 
 
-            CommandScheduler.getInstance().run();
 
 
 
 //            driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
 //                    new ClawDown(claw)
 //            );
-            vision.periodic();
+//            vision.periodic();
             //vision.setDetectionColor(Vision.SampleColor.RED);
 
             // short sample collection
@@ -200,6 +213,7 @@ public class Internationals_TeleOP extends LinearOpMode {
 
                     )
             );
+
 
 
             driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
@@ -288,10 +302,11 @@ public class Internationals_TeleOP extends LinearOpMode {
             driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                     new SequentialCommandGroup(
                             new ClawClose(claw),
-                            new ClawUp(claw),
+                            new MidClaw(claw),
                             new SlideRetract(cascadeSlides),
+                            new WaitCommand(300),
 //                            new PivotSampleShort(cascadePivot),
-                            new PivotReset(cascadePivot),
+                            new PivotNormal(cascadePivot),
 //                            new PivotBask(cascadePivot),
                             new ClawClose(claw)
 

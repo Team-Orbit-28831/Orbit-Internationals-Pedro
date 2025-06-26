@@ -44,8 +44,8 @@ import pedroPathing.commands.SlidesSampleShort;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
-@Autonomous(name = "Sample Auto Main", group = "Test")
-public class BlueBasketAuto extends OpMode {
+@Autonomous(name = "new thing dont use", group = "Test")
+public class NewAuto extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, opmodeTimer;
@@ -199,12 +199,12 @@ public class BlueBasketAuto extends OpMode {
                 }
                 break;
             case 2:
-//                if(!follower.isBusy()) {
-//                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ClawClose(claw), new ClawUp(claw), new PivotBask(cascadePivot)));
-//                    follower.followPath(line2);
-//                }
+                if(!follower.isBusy() && !CommandScheduler.getInstance().isScheduled()) {
+                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ClawClose(claw), new ClawUp(claw), new PivotBask(cascadePivot)));
+                    follower.followPath(line2);
+                }
 
-//                setPathState(3);
+                setPathState(3);
                 break;
 //            case 3:
 ////                if(!follower.isBusy()) {

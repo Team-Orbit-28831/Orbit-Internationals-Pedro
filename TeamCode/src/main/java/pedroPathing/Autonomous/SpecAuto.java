@@ -37,6 +37,7 @@ import pedroPathing.commands.PivotNormal;
 import pedroPathing.commands.PivotReset;
 import pedroPathing.commands.PivotResetEncoder;
 import pedroPathing.commands.PivotSampleShort;
+import pedroPathing.commands.PivotSpecDrop;
 import pedroPathing.commands.PivotZero;
 import pedroPathing.commands.SlideRetract;
 import pedroPathing.commands.SlidesHighBask;
@@ -44,8 +45,8 @@ import pedroPathing.commands.SlidesSampleShort;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
-@Autonomous(name = "Sample Auto Main", group = "Test")
-public class BlueBasketAuto extends OpMode {
+@Autonomous(name = "SpecAuto", group = "Test")
+public class SpecAuto extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, opmodeTimer;
@@ -60,15 +61,11 @@ public class BlueBasketAuto extends OpMode {
     private Telemetry telemetryA;
 
     // Starting pose - matches your generated path start point
-    private final Pose startPose = new Pose(134.526, 48.591, Math.toRadians(0));
+    private final Pose startPose = new Pose(10.212, 57.115, Math.toRadians(0));
 
-    // Single path from generated code
-    private PathChain line1;
-    private PathChain line2;
+    // Path from generated code
+    private PathChain gotoplacespec;
     private ElapsedTime clock;
-
-    // REMOVED CONSTRUCTOR - FTC OpModes should not have custom constructors
-    // The FTC framework creates OpModes automatically
 
     @Override
     public void init() {
@@ -99,14 +96,7 @@ public class BlueBasketAuto extends OpMode {
             CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ClawClose(claw)));
             CommandScheduler.getInstance().run();
 
-
             pathState = 0;
-
-            // Run initialization sequence like in your TeleOp
-
-
-            // Schedule and run the init sequence
-
 
             // Initial drawing
             Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
@@ -122,49 +112,34 @@ public class BlueBasketAuto extends OpMode {
     }
 
     public void buildPaths() {
-        // Build the single path from your generated code
+        // Build the path from your generated code
         PathBuilder builder = new PathBuilder();
-        line1 = builder
+        gotoplacespec = builder
                 .addPath(
+                        // Line 1
                         new BezierCurve(
-                                new Point(134.615, 57.103, Point.CARTESIAN),
-                                new Point(105.708, 39.547, Point.CARTESIAN),
-                                new Point(128.05326354679804, 18.620689655172413, Point.CARTESIAN)
+                                new Point(9.346, 63.173, Point.CARTESIAN),
+                                new Point(29.076923076923077, 64.38461538461539, Point.CARTESIAN),
+                                new Point(38.077, 73.385, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-225))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
-//        line2 = builder
-//                .addPath(
-//                        new BezierLine(
-//                                new Point(128.05326354679804, 18.620689655172413, Point.CARTESIAN),
-//                                new Point(120.60498768472905, 20.926108374384235, Point.CARTESIAN)
-//                        )
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(-225), Math.toRadians(-180))
-//                .build();
-//        line2 = builder
-//                .addPath(
-//
-//                        new BezierLine(
-//                                new Point(125.216, 19.153, Point.CARTESIAN),
-//                                new Point(120.605, 23.586, Point.CARTESIAN)
-//                        )
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(-225), Math.toRadians(-180))
-//                .build();
     }
 
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                // Follow the single path
-                CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ClawClose(claw),new ClawUp(claw),new PivotBask(cascadePivot)) );
-                follower.followPath(line1);
-
-
+                // Start following the generated path with initial subsystem setup
+                CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
+                        new ClawClose(claw),
+                        new ClawUp(claw),
+                        new PivotSpecDrop(cascadePivot)
+                ));
+                follower.followPath(gotoplacespec);
                 setPathState(1);
                 break;
+
             case 1:
                 // Wait for path to complete
                 if(!follower.isBusy()) {
@@ -173,64 +148,17 @@ public class BlueBasketAuto extends OpMode {
                     telemetryA.addData("Final Y", follower.getPose().getY());
                     telemetryA.addData("Final Heading", Math.toDegrees(follower.getPose().getHeading()));
                     telemetryA.addData("Total Time", opmodeTimer.getElapsedTimeSeconds());
-                    SequentialCommandGroup doBask = new SequentialCommandGroup(
-                            new ClawDown(claw),
-                            new ClawClose(claw),
-                            new PivotBask(cascadePivot),
 
-                            new SlidesHighBask(cascadeSlides),
-                            new WaitCommand(750),
+                    // Execute end-of-path sequence
 
-                            new WaitCommand(300),
-                            new ClawUp(claw),
-                            new WaitCommand(100),
-                            new ClawOpen(claw),
-                            new WaitCommand(100),
-                            new ClawDown(claw),
-                            new WaitCommand(100),
-                            new SlideRetract(cascadeSlides),
-
-                            new PivotZero(cascadePivot),
-                            new WaitCommand(100),
-                            new ClawUp(claw)
-                    );
-                    CommandScheduler.getInstance().schedule(doBask);
                     setPathState(2);
                 }
                 break;
-            case 2:
-//                if(!follower.isBusy()) {
-//                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ClawClose(claw), new ClawUp(claw), new PivotBask(cascadePivot)));
-//                    follower.followPath(line2);
-//                }
 
-//                setPathState(3);
+            case 2:
+                // Final state - autonomous complete
+                telemetryA.addData("STATUS", "AUTONOMOUS COMPLETE");
                 break;
-//            case 3:
-////                if(!follower.isBusy()) {
-////                    telemetryA.addData("STATUS", "PATH COMPLETE!");
-////                    telemetryA.addData("Final X", follower.getPose().getX());
-////                    telemetryA.addData("Final Y", follower.getPose().getY());
-////                    telemetryA.addData("Final Heading", Math.toDegrees(follower.getPose().getHeading()));
-////                    telemetryA.addData("Total Time", opmodeTimer.getElapsedTimeSeconds());
-////                    SequentialCommandGroup doBask = new SequentialCommandGroup(
-////                            new ClawOpen(claw),
-////                            new WaitCommand(300),
-////                            new PivotSampleShort(cascadePivot),
-////                            new SlidesSampleShort(cascadeSlides),
-////                            new ClawOpen(claw),
-////                            new ClawFlat(claw),
-////                            new ClawDown(claw)
-////
-////
-////
-////
-////
-////                    );
-////                    CommandScheduler.getInstance().schedule(doBask);
-////                    setPathState(4);
-//                }
-//                break;
         }
     }
 
@@ -252,7 +180,8 @@ public class BlueBasketAuto extends OpMode {
 
             // Run autonomous state machine
             autonomousPathUpdate();
-            // do commands n stuff
+
+            // Run command scheduler
             CommandScheduler.getInstance().run();
 
             // Get current pose from pose updater (consistent with LocalizationTest)
@@ -271,9 +200,9 @@ public class BlueBasketAuto extends OpMode {
             telemetryA.addData("total heading", poseUpdater.getTotalHeading());
 
             telemetryA.addData("=== TARGET ===", "");
-            telemetryA.addData("Target X", 126.457);
-            telemetryA.addData("Target Y", 21.990);
-            telemetryA.addData("Target Heading (deg)", -225);
+            telemetryA.addData("Target X", 45.346);
+            telemetryA.addData("Target Y", 72.865);
+            telemetryA.addData("Target Heading (deg)", 0);
             telemetryA.update();
 
             // Drawing for dashboard visualization (same as LocalizationTest)
