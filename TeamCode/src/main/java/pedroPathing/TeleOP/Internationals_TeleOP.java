@@ -85,8 +85,8 @@ public class Internationals_TeleOP extends LinearOpMode {
         telemetry.addData("Slides pos", cascadeSlides.getCurrentPosition());
         telemetry.addData("Pivot pos", cascadePivot.getAveragePosition());
         telemetry.update();
-        follower = new Follower(hardwareMap);
-        follower.setStartingPose(startPose);
+//        follower = new Follower(hardwareMap);
+//        follower.setStartingPose(startPose);
 
 //        claw.upClaw();
 //        cascadePivot.pivotMotorLeft.setTargetPosition(1000);
@@ -132,14 +132,14 @@ public class Internationals_TeleOP extends LinearOpMode {
 
             CommandScheduler.getInstance().run();
 
-
-            if (gamepad2.right_trigger>0.1){
-                new SequentialCommandGroup(
-                        new ClawDown(claw),
-                        new WaitCommand(500),
-                        new PivotSpecDone(cascadePivot)
-                );
-            }
+//
+//            if (gamepad2.right_trigger>0.1){
+//                new SequentialCommandGroup(
+//                        new ClawDown(claw),
+//                        new WaitCommand(500),
+//                        new PivotSpecDone(cascadePivot)
+//                );
+//            }
 
 //            if (gamepad2.left_trigger > 0.1) {
 //                cascadePivot.pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -187,7 +187,7 @@ public class Internationals_TeleOP extends LinearOpMode {
 
                             new ClawClose(claw),
                             new PivotSpecDrop(cascadePivot),
-                            new WaitCommand(100),
+//                            new WaitCommand(100),
                             new ClawUp(claw)
 
 
@@ -203,7 +203,7 @@ public class Internationals_TeleOP extends LinearOpMode {
 
                             new ClawOpen(claw),
                             new PivotSpecCollect(cascadePivot),
-                            new WaitCommand(100),
+//                            new WaitCommand(100),
                             new MidClaw(claw)
 
 
