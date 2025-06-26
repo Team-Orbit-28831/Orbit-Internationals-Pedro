@@ -123,7 +123,7 @@ public class SpecAuto extends OpMode {
                                 new Point(30.077, 73.385, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(45)
+                .setConstantHeadingInterpolation(Math.toRadians(180))
 
                 .build();
     }
