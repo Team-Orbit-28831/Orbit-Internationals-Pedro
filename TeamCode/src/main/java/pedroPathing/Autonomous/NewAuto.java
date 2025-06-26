@@ -85,13 +85,13 @@ public class NewAuto extends OpMode {
 
             // Initialize constants and pose updater like LocalizationTest
             Constants.setConstants(FConstants.class, LConstants.class);
-            poseUpdater = new PoseUpdater(hardwareMap, FConstants.class, LConstants.class);
+            poseUpdater = new PoseUpdater(hardwareMap);
             dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 
             // Initialize dashboard telemetry using MultipleTelemetry
             telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
-            follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+            follower = new Follower(hardwareMap);
             follower.setStartingPose(startPose);
             poseUpdater.setStartingPose(startPose);
 

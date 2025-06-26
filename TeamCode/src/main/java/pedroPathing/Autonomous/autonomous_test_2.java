@@ -35,7 +35,7 @@ public class autonomous_test_2 extends OpMode {
         pathTimer = new Timer();
         Constants.setConstants(FConstants.class, LConstants.class);
 
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
 
         buildPaths();

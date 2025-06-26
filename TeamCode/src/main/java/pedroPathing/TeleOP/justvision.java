@@ -43,7 +43,7 @@ public class justvision extends OpMode {
     /** This method is call once when init is played, it initializes the follower **/
     @Override
     public void init() {
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
 
         // Initialize vision

@@ -85,7 +85,7 @@ public class Internationals_TeleOP extends LinearOpMode {
         telemetry.addData("Slides pos", cascadeSlides.getCurrentPosition());
         telemetry.addData("Pivot pos", cascadePivot.getAveragePosition());
         telemetry.update();
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
 
 //        claw.upClaw();

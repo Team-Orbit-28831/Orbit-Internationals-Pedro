@@ -61,7 +61,7 @@ public class SpecAuto extends OpMode {
     private Telemetry telemetryA;
 
     // Starting pose - matches your generated path start point
-    private final Pose startPose = new Pose(10.212, 57.115, Math.toRadians(0));
+    private final Pose startPose = new Pose(9.346153846153847, 63.173076923076934, Math.toRadians(0));
 
     // Path from generated code
     private PathChain gotoplacespec;
@@ -82,13 +82,13 @@ public class SpecAuto extends OpMode {
 
             // Initialize constants and pose updater like LocalizationTest
             Constants.setConstants(FConstants.class, LConstants.class);
-            poseUpdater = new PoseUpdater(hardwareMap, FConstants.class, LConstants.class);
+            poseUpdater = new PoseUpdater(hardwareMap);
             dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 
             // Initialize dashboard telemetry using MultipleTelemetry
             telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
-            follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+            follower = new Follower(hardwareMap);
             follower.setStartingPose(startPose);
             poseUpdater.setStartingPose(startPose);
 
@@ -119,11 +119,12 @@ public class SpecAuto extends OpMode {
                         // Line 1
                         new BezierCurve(
                                 new Point(9.346, 63.173, Point.CARTESIAN),
-                                new Point(29.076923076923077, 64.38461538461539, Point.CARTESIAN),
-                                new Point(38.077, 73.385, Point.CARTESIAN)
+
+                                new Point(30.077, 73.385, Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setConstantHeadingInterpolation(45)
+
                 .build();
     }
 
@@ -136,6 +137,7 @@ public class SpecAuto extends OpMode {
                         new ClawUp(claw),
                         new PivotSpecDrop(cascadePivot)
                 ));
+                follower.setMaxPower(1);
                 follower.followPath(gotoplacespec);
                 setPathState(1);
                 break;
@@ -176,6 +178,7 @@ public class SpecAuto extends OpMode {
             dashboardPoseTracker.update();
 
             // Update Pedro Pathing
+
             follower.update();
 
             // Run autonomous state machine
@@ -230,6 +233,7 @@ public class SpecAuto extends OpMode {
     @Override
     public void start() {
         opmodeTimer.resetTimer();
+
         setPathState(0);
         telemetryA.addData("Status", "STARTED - Following path...");
     }

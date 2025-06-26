@@ -200,7 +200,7 @@ public class BasicAutonomous extends OpMode {
         Constants.setConstants(FConstants.class, LConstants.class);
 
         // Initialize follower with constants classes
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
 
         // Build paths based on configuration

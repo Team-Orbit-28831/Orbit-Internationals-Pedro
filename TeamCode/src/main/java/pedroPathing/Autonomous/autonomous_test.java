@@ -154,7 +154,7 @@ public class autonomous_test extends OpMode {
         pathTimer = new Timer();
 
         // Initialize Pedro Pathing
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
 
         // Build all paths
