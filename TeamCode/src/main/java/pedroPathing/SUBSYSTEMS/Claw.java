@@ -32,14 +32,13 @@ public class Claw implements Subsystem {
 
     private ElapsedTime timer = new ElapsedTime();
 
-    public void init(HardwareMap hardwareMap) {
+    public Claw(HardwareMap hardwareMap){
         clawServo = hardwareMap.get(Servo.class, "clawServo");
         clawRotServo = hardwareMap.get(Servo.class, "clawRot");
         clawUDServo = hardwareMap.get(Servo.class, "clawUD");
 //        clawUDServo.setDirection(Servo.Direction.REVERSE);
-
-
     }
+
 
     // Control claw open/close based on buttons (example)
     public void controlClaw(boolean openButton, boolean closeButton) {

@@ -176,8 +176,8 @@ public class CascadePivot implements Subsystem {
     }
 
     public void pivotZero() {
-        pivotMotorLeft.setTargetPosition(0);
-        pivotMotorRight.setTargetPosition(0);
+        pivotMotorLeft.setTargetPosition(75);
+        pivotMotorRight.setTargetPosition(75);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setPower(0.7);

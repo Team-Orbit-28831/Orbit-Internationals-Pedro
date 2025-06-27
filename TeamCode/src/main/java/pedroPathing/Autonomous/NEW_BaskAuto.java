@@ -1,8 +1,5 @@
 package pedroPathing.Autonomous;
 
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierLine;
@@ -15,19 +12,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import pedroPathing.commands.ClawClose;
-import pedroPathing.commands.ClawDown;
-import pedroPathing.commands.ClawOpen;
-import pedroPathing.commands.ClawUp;
-import pedroPathing.commands.PivotBask;
-import pedroPathing.commands.PivotNormal;
-import pedroPathing.commands.SlideRetract;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
-import pedroPathing.commands.SlidesHighBask;
-
 import pedroPathing.SUBSYSTEMS.Claw;
-import pedroPathing.SUBSYSTEMS.Drivetrain;
 import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.CascadeSlides;
 
@@ -72,9 +60,9 @@ public class NEW_BaskAuto extends OpMode {
 
         pivot = new CascadePivot(hardwareMap, telemetry);
         slides = new CascadeSlides(hardwareMap, telemetry);
-        claw = new Claw();
+        claw = new Claw(hardwareMap);
 
-        claw.init(hardwareMap);
+//        claw.init(hardwareMap);
 
         buildPaths();
         pathState = 0;

@@ -5,12 +5,10 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.pathgen.BezierCurve;
-import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.Point;
@@ -29,18 +27,12 @@ import pedroPathing.SUBSYSTEMS.CascadeSlides;
 import pedroPathing.SUBSYSTEMS.Claw;
 import pedroPathing.commands.ClawClose;
 import pedroPathing.commands.ClawDown;
-import pedroPathing.commands.ClawFlat;
 import pedroPathing.commands.ClawOpen;
 import pedroPathing.commands.ClawUp;
 import pedroPathing.commands.PivotBask;
-import pedroPathing.commands.PivotNormal;
-import pedroPathing.commands.PivotReset;
-import pedroPathing.commands.PivotResetEncoder;
-import pedroPathing.commands.PivotSampleShort;
 import pedroPathing.commands.PivotZero;
 import pedroPathing.commands.SlideRetract;
 import pedroPathing.commands.SlidesHighBask;
-import pedroPathing.commands.SlidesSampleShort;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -80,8 +72,8 @@ public class NewAuto extends OpMode {
             // Initialize subsystems here instead of constructor
             cascadeSlides = new CascadeSlides(hardwareMap, telemetry);
             cascadePivot = new CascadePivot(hardwareMap, telemetry);
-            claw = new Claw();
-            claw.init(hardwareMap); // Don't forget to initialize the claw
+            claw = new Claw(hardwareMap);
+//            claw.init(hardwareMap); // Don't forget to initialize the claw
 
             // Initialize constants and pose updater like LocalizationTest
             Constants.setConstants(FConstants.class, LConstants.class);

@@ -1,5 +1,9 @@
 package pedroPathing.Autonomous;
 
+import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
@@ -7,10 +11,23 @@ import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Constants;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import pedroPathing.SUBSYSTEMS.CascadePivot;
+import pedroPathing.SUBSYSTEMS.CascadeSlides;
+import pedroPathing.SUBSYSTEMS.Claw;
+import pedroPathing.SUBSYSTEMS.Vision;
+import pedroPathing.commands.ClawDown;
+import pedroPathing.commands.ClawOpen;
+import pedroPathing.commands.MidClaw;
+import pedroPathing.commands.PivotNormal;
+import pedroPathing.commands.PivotSpecDone;
+import pedroPathing.commands.PivotSpecDrop;
 import pedroPathing.constants.FConstants;
 import pedroPathing.constants.LConstants;
 
@@ -29,6 +46,11 @@ public class AutoChamberPedro extends OpMode {
     private Follower follower;
     private Timer pathTimer, opmodeTimer;
 
+    private SequentialCommandGroup hangCommand;
+
+    private SequentialCommandGroup hang2Command;
+
+
     /** This is the variable where we store the state of our auto.
      * It is used by the pathUpdate method. */
     private int pathState;
@@ -43,9 +65,23 @@ public class AutoChamberPedro extends OpMode {
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
 
     /** Start Pose of our robot */
-    private final Pose startPose = new Pose(11, 100, Math.toRadians(-180));
+    private final Pose startPose = new Pose(11, 100, Math.toRadians(180));
 
     private Path scorePreload, park;
+
+    private CascadeSlides cascadeSlides;
+    private CascadePivot cascadePivot;
+    private Claw claw;
+
+    private Servo clawServo;
+    private Servo clawRotServo;
+    private Servo clawUDServo;
+
+    public DcMotorEx pivotMotorLeft;   // vertical
+    public DcMotorEx pivotMotorRight;
+
+    public static DcMotorEx slideMotor;
+
     private PathChain grabPickup1, grabPickup2, grabPickup2p5, grabPickup3p5, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
@@ -68,15 +104,15 @@ public class AutoChamberPedro extends OpMode {
          * Here is a explanation of the difference between Paths and PathChains <https://pedropathing.com/commonissues/pathtopathchain.html> */
 
         /* This is our scorePreload path. We are using a BezierLine, which is a straight line. */
-        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(new Pose(23, 102, Math.toRadians(0)))));
-        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), new Pose(22, 102, Math.toRadians(-180)).getHeading());
+        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(new Pose(43, 102, Math.toRadians(0)))));
+        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), new Pose(22, 102, Math.toRadians(180)).getHeading());
 
         /* Here is an example for Constant Interpolation
         scorePreload.setConstantInterpolation(startPose.getHeading()); */
 
         /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point((new Pose(22, 122, Math.toRadians(180)))), new Point(new Pose(5, 50, Math.toRadians(180))), new Point(new Pose(68, 85, Math.toRadians(0))), new Point(new Pose(63, 75, Math.toRadians(180)))))
+                .addPath(new BezierCurve(new Point((new Pose(43, 122, Math.toRadians(180)))), new Point(new Pose(5, 63, Math.toRadians(180))), new Point(new Pose(68, 82, Math.toRadians(0))), new Point(new Pose(63, 75, Math.toRadians(180)))))
                 .setLinearHeadingInterpolation(new Pose(27, 102, Math.toRadians(180)).getHeading(), new Pose(63, 58, Math.toRadians(180)).getHeading())
                 .setZeroPowerAccelerationMultiplier(1)
                 .build();
@@ -137,76 +173,114 @@ public class AutoChamberPedro extends OpMode {
      * Everytime the switch changes case, it will reset the timer. (This is because of the setPathState() method)
      * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. */
     public void autonomousPathUpdate() {
+
+//        CommandScheduler.getInstance().run();
+
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
-                setPathState(1);
-                break;
+//                if (hangCommand == null) {
+//                    hangCommand = new SequentialCommandGroup(
+//                            new PivotSpecDrop(cascadePivot),
+//                            new WaitCommand(100),
+//                            new MidClaw(claw),
+//                            new WaitCommand(100)
+//                    );
+//                    CommandScheduler.getInstance().schedule(hangCommand);
+//                }
 
-            case 1:
-                if (!follower.isBusy()) {
-                    follower.followPath(grabPickup1, true);
+                // Wait until command finishes
+                if (!CommandScheduler.getInstance().isScheduled(hangCommand)) {
                     setPathState(2);
                 }
                 break;
 
+
+
+//            case 1:
+//                if (!follower.isBusy()) {
+//                    if (hang2Command == null) {
+//                        hang2Command = new SequentialCommandGroup(
+//                                new ClawDown(claw),
+//                                new WaitCommand(2000),
+//                                new PivotSpecDone(cascadePivot),
+//                                new WaitCommand(2000),
+//                                new ClawOpen(claw)
+//                        );
+//                        CommandScheduler.getInstance().schedule(hang2Command);
+//                    }
+//
+//                    // Wait until command finishes
+//                    if (!CommandScheduler.getInstance().isScheduled(hang2Command)) {
+//                        setPathState(2);
+//                    }
+//                    break;
+//                }
+
             case 2:
                 if (!follower.isBusy()) {
-                    follower.followPath(scorePickup1, true);
+                    follower.followPath(grabPickup1, true);
                     setPathState(3);
                 }
                 break;
 
             case 3:
                 if (!follower.isBusy()) {
-                    follower.followPath(grabPickup2, true);
+                    follower.followPath(scorePickup1, true);
                     setPathState(4);
                 }
                 break;
 
             case 4:
                 if (!follower.isBusy()) {
-                    follower.followPath(scorePickup2, true);
+                    follower.followPath(grabPickup2, true);
                     setPathState(5);
                 }
                 break;
 
             case 5:
                 if (!follower.isBusy()) {
-                    follower.followPath(grabPickup2p5, true);
+                    follower.followPath(scorePickup2, true);
                     setPathState(6);
                 }
                 break;
 
             case 6:
                 if (!follower.isBusy()) {
-                    follower.followPath(grabPickup3, true);
+                    follower.followPath(grabPickup2p5, true);
                     setPathState(7);
                 }
                 break;
 
             case 7:
                 if (!follower.isBusy()) {
-                    follower.followPath(grabPickup3p5, true);
+                    follower.followPath(grabPickup3, true);
                     setPathState(8);
                 }
                 break;
 
             case 8:
                 if (!follower.isBusy()) {
-                    follower.followPath(scorePickup3, true);
+                    follower.followPath(grabPickup3p5, true);
                     setPathState(9);
                 }
                 break;
 
             case 9:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
-                    follower.followPath(park, true);
+                if (!follower.isBusy()) {
+                    follower.followPath(scorePickup3, true);
                     setPathState(10);
                 }
                 break;
 
             case 10:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
+                    follower.followPath(park, true);
+                    setPathState(11);
+                }
+                break;
+
+            case 11:
                 // Auto complete - robot is parked
                 break;
         }
@@ -228,6 +302,8 @@ public class AutoChamberPedro extends OpMode {
         follower.setMaxPower(0.7);
         autonomousPathUpdate();
 
+        CommandScheduler.getInstance().run();
+
         // Feedback to Driver Hub
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
@@ -242,6 +318,32 @@ public class AutoChamberPedro extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
+        Constants.setConstants(FConstants.class, LConstants.class);
+
+        cascadeSlides = new CascadeSlides(hardwareMap, telemetry);
+        cascadePivot = new CascadePivot(hardwareMap, telemetry);
+        claw = new Claw(hardwareMap);
+        clawServo = hardwareMap.get(Servo.class, "clawServo");
+        clawRotServo = hardwareMap.get(Servo.class, "clawRot");
+        clawUDServo = hardwareMap.get(Servo.class, "clawUD");
+
+        slideMotor = hardwareMap.get(DcMotorEx.class, "cascade");
+        slideMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        slideMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        pivotMotorLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
+        pivotMotorRight = hardwareMap.get(DcMotorEx.class, "pivotRight");
+
+        pivotMotorLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        pivotMotorRight.setDirection(DcMotorEx.Direction.REVERSE);
+
+        pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        pivotMotorLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        pivotMotorRight.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);

@@ -1,11 +1,8 @@
 package pedroPathing.TeleOP;
 
-import android.transition.Slide;
-
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.localization.Pose;
+//import com.pedropathing.follower.Follower;
+//import com.pedropathing.localization.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import pedroPathing.SUBSYSTEMS.Drivetrain;
@@ -26,8 +23,6 @@ import pedroPathing.commands.CollectSub;
 //import pedroPathing.commands.SampleAutoAlign;
 import pedroPathing.commands.MidClaw;
 import pedroPathing.commands.PivotBask;
-import pedroPathing.commands.PivotReset;
-import pedroPathing.commands.PivotResetEncoder;
 import pedroPathing.commands.PivotSampleLong;
 import pedroPathing.commands.PivotNormal;
 import pedroPathing.commands.PivotSampleShort;
@@ -43,14 +38,11 @@ import pedroPathing.commands.m_pivotdown;
 import pedroPathing.commands.m_pivotup;
 import pedroPathing.commands.m_slidesdown;
 import pedroPathing.commands.m_slidesup;
-import pedroPathing.constants.FConstants;
-import pedroPathing.constants.LConstants;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name = "Internationals TeleOp Main", group = "Linear OpMode")
 public class Internationals_TeleOP extends LinearOpMode {
@@ -62,8 +54,8 @@ public class Internationals_TeleOP extends LinearOpMode {
 //    private DriveTrainBasic driveTrainBasic;
 
 
-    private Follower follower;
-    private final Pose startPose = new Pose(0, 0, 0);
+//    private Follower follower;
+//    private final Pose startPose = new Pose(0, 0, 0);
 
     private GamepadEx driver;
     private GamepadEx operator;
@@ -75,10 +67,10 @@ public class Internationals_TeleOP extends LinearOpMode {
         cascadeSlides = new CascadeSlides(hardwareMap, telemetry);
         cascadePivot = new CascadePivot(hardwareMap, telemetry);
         vision = new Vision(hardwareMap,telemetry);
-        claw = new Claw();
+        claw = new Claw(hardwareMap);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
-        claw.init(hardwareMap);
+        claw = new Claw(hardwareMap);
         vision.initializeCamera();
 
         telemetry.addData("Status", "Initialized");
@@ -356,9 +348,13 @@ public class Internationals_TeleOP extends LinearOpMode {
                     new ClawPerp(claw)
             );
 
-//            operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-//                    new ClawDiagonal(claw)
-//            );
+            operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+                    new SequentialCommandGroup(
+                        new ClawDown(claw),
+                        new WaitCommand(500),
+                        new PivotSpecDone(cascadePivot)
+                )
+            );
 
 //            driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
 //                    new SequentialCommandGroup(
