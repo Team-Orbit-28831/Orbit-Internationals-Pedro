@@ -19,6 +19,7 @@ import pedroPathing.commands.ClawPerp;
 import pedroPathing.commands.ClawStraight;
 import pedroPathing.commands.ClawUp;
 //import pedroPathing.commands.ClawVision;
+import pedroPathing.commands.ClawVision;
 import pedroPathing.commands.CollectSub;
 //import pedroPathing.commands.SampleAutoAlign;
 import pedroPathing.commands.MidClaw;
@@ -158,7 +159,7 @@ public class Internationals_TeleOP extends LinearOpMode {
                             new ClawOpen(claw),
                             new WaitCommand(100),
                             new PivotSampleShort(cascadePivot),
-//                            new ClawVision(claw, vision),
+                            new ClawVision(claw, vision),
                             new VisionSlides(cascadeSlides,vision),
                             new ClawOpen(claw),
 //                            new ClawFlat(claw)

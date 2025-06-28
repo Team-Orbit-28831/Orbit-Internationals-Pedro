@@ -47,8 +47,8 @@ public class CascadePivot implements Subsystem {
         pivotMotorLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
         pivotMotorRight = hardwareMap.get(DcMotorEx.class, "pivotRight");
 
-        pivotMotorLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        pivotMotorRight.setDirection(DcMotorEx.Direction.REVERSE);
+        pivotMotorLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        pivotMotorRight.setDirection(DcMotorEx.Direction.FORWARD);
 
         pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
