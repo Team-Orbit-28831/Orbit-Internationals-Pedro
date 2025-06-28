@@ -63,10 +63,10 @@ public class Internationals_TeleOP extends LinearOpMode {
     @Override
     public void runOpMode() {
         drivetrain = new Drivetrain(hardwareMap, telemetry);
-//        driveTrainBasic = new DriveTrainBasic();
+//        driveTrainBasic = new DriveTrainBasic()
         cascadeSlides = new CascadeSlides(hardwareMap, telemetry);
         cascadePivot = new CascadePivot(hardwareMap, telemetry);
-        vision = new Vision(hardwareMap,telemetry);
+        vision = new Vision(hardwareMap);
         claw = new Claw(hardwareMap);
         driver = new GamepadEx(gamepad1);
         operator = new GamepadEx(gamepad2);
@@ -147,7 +147,7 @@ public class Internationals_TeleOP extends LinearOpMode {
 //            driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
 //                    new ClawDown(claw)
 //            );
-//            vision.periodic();
+            vision.periodic();
             //vision.setDetectionColor(Vision.SampleColor.RED);
 
             // short sample collection
@@ -156,15 +156,15 @@ public class Internationals_TeleOP extends LinearOpMode {
             driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
                     new SequentialCommandGroup(
                             new ClawOpen(claw),
-                            new WaitCommand(300),
+                            new WaitCommand(100),
                             new PivotSampleShort(cascadePivot),
 //                            new ClawVision(claw, vision),
                             new VisionSlides(cascadeSlides,vision),
                             new ClawOpen(claw),
 //                            new ClawFlat(claw)
 
-                            new ClawDown(claw),
-                            new WaitCommand(150)
+                            new ClawDown(claw)
+
 
 
 
@@ -428,6 +428,13 @@ public class Internationals_TeleOP extends LinearOpMode {
             telemetry.addData("Right Stick X", gamepad2.right_stick_x);
             telemetry.addData("button prrr", driver.getGamepadButton(GamepadKeys.Button.X).get());
             telemetry.addData("claw pos", claw.getCurrentUDPos());
+            telemetry.addData("Target Visible", vision.isTargetVisible());
+            telemetry.addData("Tx (deg)", vision.getTx(0));
+            telemetry.addData("Ty (deg)", vision.getTy(0));
+
+            telemetry.addData("Detector Results", vision.getDetections());
+            telemetry.addData("Orientation", vision.getOrientationFlag());
+
 
 
             telemetry.update();

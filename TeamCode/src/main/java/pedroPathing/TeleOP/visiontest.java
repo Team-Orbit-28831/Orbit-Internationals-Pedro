@@ -12,7 +12,7 @@ public class visiontest extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Initialize vision system (LED is unused)
-        vision = new Vision(hardwareMap, telemetry);
+        vision = new Vision(hardwareMap);
 
         vision.initializeCamera();  // Start the Limelight camera
 
