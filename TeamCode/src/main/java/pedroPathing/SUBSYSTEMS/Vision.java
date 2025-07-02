@@ -1,139 +1,114 @@
 package pedroPathing.SUBSYSTEMS;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import edu.wpi.first.math.MathUtil;
+
+import java.util.List;
+
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-
-@Config
 public class Vision extends SubsystemBase {
-    private final Limelight3A camera;
+    private final Limelight3A limelight;
+    private LLResult result;
+    @Getter
+    private List<LLResultTypes.DetectorResult> detections;
+    private List<List<Double>> corners;
 
-    //private final Servo led;
-
-    public static double ledPWM = 0.5;
-
-    @Getter private boolean isDataOld = false;
-    @Getter @Setter private SampleColor detectionColor = SampleColor.RED;
-    @Getter private LLResult result;
-
-    public static double CAMERA_HEIGHT = 349 - 16;
-    public static double CAMERA_ANGLE = -45.0;
-    public static double TARGET_HEIGHT = 19.05;
-
-
-
-    public static double strafeConversionFactor = 6.6667;
-    public static double cameraStrafeToBot = -13.25;
-
-    public static double sampleToRobotDistance = 145;
-
-    Telemetry telemetry;
-
-    public Vision(final HardwareMap hardwareMap, Telemetry telemetry) {
-        camera = hardwareMap.get(Limelight3A.class, "limelight");
-        //led = hardwareMap.get(Servo.class, "LED");
-        this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-    }
-
-    public void setLEDPWM() {
-        //led.setPosition(ledPWM);
+    public Vision(final HardwareMap hardwareMap) {
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(0); // RedYellow pipeline
     }
 
 
     public void initializeCamera() {
-        camera.setPollRateHz(50);
-        camera.start();
-    }
-
-    @RequiredArgsConstructor
-    public enum SampleColor {
-        RED(0.0),
-        BLUE(1.0),
-        YELLOW(2.0);
-
-        private final double colorVal;
-    }
-
-    public double getTx(double defaultValue) {
-        if (result == null) {
-            return defaultValue;
-        }
-        return result.getTx();
-    }
-
-    public double getTy(double defaultValue) {
-        if (result == null) {
-            return defaultValue;
-        }
-        return result.getTy();
-    }
-
-    public boolean isTargetVisible() {
-        if (result == null) {
-            return false;
-        }
-        return !MathUtil.isNear(0, result.getTa(), 0.0001);
+        limelight.setPollRateHz(50);
+        limelight.start();
+        limelight.pipelineSwitch(0);
     }
 
     public double getDistance() {
         double ty = getTy(0.0);
-        if (MathUtil.isNear(0, ty, 0.01)) {
-            return 0;
-        }
-        double angleToGoalDegrees = CAMERA_ANGLE + ty;
-        double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
-        double distanceMM = (TARGET_HEIGHT - CAMERA_HEIGHT) / Math.tan(angleToGoalRadians);
+        if (ty == 0) return 0;
+        double angleToGoal = CAMERA_ANGLE + ty;
+        double distanceMM = (TARGET_HEIGHT - CAMERA_HEIGHT) / Math.tan(Math.toRadians(angleToGoal));
         return Math.abs(distanceMM) - sampleToRobotDistance;
-
     }
 
-    // Get the strafe
+    public double getTx(double defaultValue) {
+        return (result != null) ? result.getTx() : defaultValue;
+    }
+
+    public double getTy(double defaultValue) {
+        return (result != null) ? result.getTy() : defaultValue;
+    }
+
     public double getStrafeOffset() {
         double tx = getTx(0);
-        if (tx != 0) {
-            return tx * strafeConversionFactor - cameraStrafeToBot / 25.4;
-        }
-        return 0;
+        return (tx != 0)
+                ? tx * strafeConversionFactor - cameraStrafeToBot / 25.4
+                : 0;
     }
 
-    public Double getTurnServoDegree() {
-        if (result == null) {
-            return null;
+    public boolean isTargetVisible() {
+        return result != null && result.isValid() && !detections.isEmpty();
+    }
 
-        }
-        return result.getPythonOutput()[3];
+    @SuppressWarnings("unchecked")
+    public List<LLResultTypes.DetectorResult> getDetections() {
+        return detections;
     }
 
     @Override
     public void periodic() {
-        camera.updatePythonInputs(
-                new double[] {detectionColor.colorVal, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
-        result = camera.getLatestResult();
-
-        if (result != null) {
-            long staleness = result.getStaleness();
-            // Less than 100 milliseconds old666666
-            isDataOld = staleness >= 100;
-            telemetry.addData("Strafe Offset", getStrafeOffset());
-            telemetry.addData("Distance", getDistance());
-            telemetry.addData("Turn Servo Degrees", getTurnServoDegree());
-
-                  telemetry.addData("Tx", result.getTx());
-                  telemetry.addData("Ty", result.getTy());
-                  telemetry.addData("Ta", result.getTa());
-
-                  telemetry.update();
+        result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            detections = result.getDetectorResults();
+            if (detections != null && !detections.isEmpty()) {
+                corners = detections.get(0).getTargetCorners();
+            } else {
+                corners = null;
+            }
+        } else {
+            corners = null;
         }
     }
+
+    /**
+     * Returns orientation flag:
+     * 1 if contour is horizontal (width ≥ 1.25 × height), else 0.
+     */
+    public int getOrientationFlag() {
+        if (corners == null || corners.size() != 4) {
+            return 0;
+        }
+        List<Double> tl = corners.get(0);
+        List<Double> tr = corners.get(1);
+        List<Double> br = corners.get(2);
+        List<Double> bl = corners.get(3);
+
+        if (tl == null || tr == null || br == null || bl == null) {
+            return 0;
+        }
+
+        double top = Math.hypot(tr.get(0) - tl.get(0), tr.get(1) - tl.get(1));
+        double bottom = Math.hypot(br.get(0) - bl.get(0), br.get(1) - bl.get(1));
+        double left = Math.hypot(bl.get(0) - tl.get(0), bl.get(1) - tl.get(1));
+        double right = Math.hypot(br.get(0) - tr.get(0), br.get(1) - tr.get(1));
+
+        double width = (top + bottom) / 2.0;
+        double height = (left + right) / 2.0;
+
+        return (width >= 1.25 * height) ? 1 : 0;
+    }
+
+    // Constants
+    public static final double CAMERA_HEIGHT = 279;
+    public static final double CAMERA_ANGLE = -30.0;
+    public static final double TARGET_HEIGHT = 19.05;
+    public static final double strafeConversionFactor = 6.6667;
+    public static final double cameraStrafeToBot = 13.25;
+    public static final double sampleToRobotDistance = 145;
 }
