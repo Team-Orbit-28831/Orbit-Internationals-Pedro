@@ -16,17 +16,19 @@ public class CascadePivot implements Subsystem {
     public DcMotorEx pivotMotorLeft;   // vertical
     public DcMotorEx pivotMotorRight;  // extension
 
-    public int baskHeight = -2999;
-    public int normalHeight = -701;
+    public int baskHeight = -3301;
+    public int normalHeight = -731;
 
-    public int collectionHeight = -581;
+    public int collectionHeight = -481;
 
-    public int specDepositHeight = -2511;
+    public int specDepositHeight = -2999;
 
     public int longNormalHeight = -821;
     public int specHeight = -1691;
 
     public int resetHeight = 750;
+
+    public double pivotSpeed = 0.9;
 
 
     // PIDF coefficients
@@ -47,8 +49,8 @@ public class CascadePivot implements Subsystem {
         pivotMotorLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
         pivotMotorRight = hardwareMap.get(DcMotorEx.class, "pivotRight");
 
-        pivotMotorLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        pivotMotorRight.setDirection(DcMotorEx.Direction.REVERSE);
+        pivotMotorLeft.setDirection(DcMotorEx.Direction.FORWARD);
+        pivotMotorRight.setDirection(DcMotorEx.Direction.FORWARD);
 
         pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -95,9 +97,6 @@ public class CascadePivot implements Subsystem {
         pivotMotorLeft.setPower(leftpower);
         pivotMotorRight.setPower(rightpower);
 
-        if (getAveragePosition() >= maxPivot) {
-            stop();
-        }
     }
 
     public void stop() {
@@ -110,25 +109,25 @@ public class CascadePivot implements Subsystem {
         pivotMotorRight.setTargetPosition(baskHeight);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        pivotMotorRight.setPower(0.7);
-        pivotMotorLeft.setPower(0.7);
+        pivotMotorRight.setPower(pivotSpeed);
+        pivotMotorLeft.setPower(pivotSpeed);
     }
 
     public void pivotSpecCollect() {
-        pivotMotorLeft.setTargetPosition(-711);
-        pivotMotorRight.setTargetPosition(-711);
+        pivotMotorLeft.setTargetPosition(-831);
+        pivotMotorRight.setTargetPosition(-831);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        pivotMotorRight.setPower(0.7);
-        pivotMotorLeft.setPower(0.7);
+        pivotMotorRight.setPower(pivotSpeed);
+        pivotMotorLeft.setPower(pivotSpeed);
     }
     public void pivotDepositSpec(){
         pivotMotorLeft.setTargetPosition(specDepositHeight);
         pivotMotorRight.setTargetPosition(specDepositHeight);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        pivotMotorRight.setPower(0.7);
-        pivotMotorLeft.setPower(0.7);
+        pivotMotorRight.setPower(pivotSpeed);
+        pivotMotorLeft.setPower(pivotSpeed);
     }
 
     public void pivotToCollect() {
@@ -136,8 +135,8 @@ public class CascadePivot implements Subsystem {
         pivotMotorRight.setTargetPosition(collectionHeight);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        pivotMotorRight.setPower(0.7);
-        pivotMotorLeft.setPower(0.7);
+        pivotMotorRight.setPower(pivotSpeed);
+        pivotMotorLeft.setPower(pivotSpeed);
     }
 
     public void pivotNormal() {
@@ -145,8 +144,8 @@ public class CascadePivot implements Subsystem {
         pivotMotorRight.setTargetPosition(normalHeight);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        pivotMotorRight.setPower(0.7);
-        pivotMotorLeft.setPower(0.7);
+        pivotMotorRight.setPower(pivotSpeed);
+        pivotMotorLeft.setPower(pivotSpeed);
     }
 
     public void pivotReset() {
@@ -154,8 +153,8 @@ public class CascadePivot implements Subsystem {
         pivotMotorRight.setTargetPosition(resetHeight);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        pivotMotorRight.setPower(0.7);
-        pivotMotorLeft.setPower(0.7);
+        pivotMotorRight.setPower(pivotSpeed);
+        pivotMotorLeft.setPower(pivotSpeed);
     }
 
     public void pivotSpecDone() {
@@ -163,16 +162,16 @@ public class CascadePivot implements Subsystem {
         pivotMotorRight.setTargetPosition(-2001);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        pivotMotorRight.setPower(0.7);
-        pivotMotorLeft.setPower(0.7);
+        pivotMotorRight.setPower(pivotSpeed);
+        pivotMotorLeft.setPower(pivotSpeed);
     }
     public void pivotLongNormal() {
         pivotMotorLeft.setTargetPosition(longNormalHeight);
         pivotMotorRight.setTargetPosition(longNormalHeight);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        pivotMotorRight.setPower(0.7);
-        pivotMotorLeft.setPower(0.7);
+        pivotMotorRight.setPower(pivotSpeed);
+        pivotMotorLeft.setPower(pivotSpeed);
     }
 
     public void pivotZero() {
@@ -180,8 +179,8 @@ public class CascadePivot implements Subsystem {
         pivotMotorRight.setTargetPosition(75);
         pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        pivotMotorRight.setPower(0.7);
-        pivotMotorLeft.setPower(0.7);
+        pivotMotorRight.setPower(pivotSpeed);
+        pivotMotorLeft.setPower(pivotSpeed);
     }
 
     public int getAveragePosition() {
@@ -193,8 +192,8 @@ public class CascadePivot implements Subsystem {
             pivotMotorRight.setTargetPosition(pivotMotorRight.getCurrentPosition()-50);
             pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
             pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            pivotMotorRight.setPower(0.7);
-            pivotMotorLeft.setPower(0.7);
+            pivotMotorRight.setPower(pivotSpeed);
+            pivotMotorLeft.setPower(pivotSpeed);
 
     }
     public void resetEncoders(){

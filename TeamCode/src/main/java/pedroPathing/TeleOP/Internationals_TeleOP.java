@@ -122,6 +122,10 @@ public class Internationals_TeleOP extends LinearOpMode {
                 drivetrain.bDrive(gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x,1);
             }
 
+            if (gamepad2.right_trigger>0.1) {
+                claw.diagPos();
+            }
+
             CommandScheduler.getInstance().run();
 
 //
@@ -194,6 +198,7 @@ public class Internationals_TeleOP extends LinearOpMode {
                     new SequentialCommandGroup(
 
                             new ClawOpen(claw),
+                            new ClawFlat(claw),
                             new PivotSpecCollect(cascadePivot),
 //                            new WaitCommand(100),
                             new MidClaw(claw)
@@ -221,7 +226,16 @@ public class Internationals_TeleOP extends LinearOpMode {
 //                            new ClawDown(claw)
 
                     )
-            );
+            )
+                    .whenReleased(
+                        new SequentialCommandGroup(
+                            new ClawClose(claw),
+                            new WaitCommand(50),
+                            new ClawUp(claw),
+                            new SlideRetract(cascadeSlides),
+                            new ClawClose(claw)
+                        )
+                    );
 
             operator.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(
                     new ClawUp(claw)
@@ -241,6 +255,14 @@ public class Internationals_TeleOP extends LinearOpMode {
                             new SlideSampleLong(cascadeSlides),
                             new ClawFlat(claw)
                     )
+            ).whenReleased(
+                    new SequentialCommandGroup(
+                            new ClawClose(claw),
+                            new WaitCommand(50),
+                            new ClawUp(claw),
+                            new SlideRetract(cascadeSlides),
+                            new ClawClose(claw)
+                    )
             );
 
 
@@ -248,6 +270,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                     new SequentialCommandGroup(
                             new CollectSub(claw, cascadePivot),
+                            new WaitCommand(100),
                             new ClawClose(claw)
                     )
 

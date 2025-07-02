@@ -15,18 +15,18 @@ public class Claw implements Subsystem {
 
     private boolean isClawOpen = false;
 
-    private static final double CLAW_OPEN = 0.0;
-    private static final double CLAW_CLOSED = 0.7;
+    private static final double CLAW_OPEN = 0.1;
+    private static final double CLAW_CLOSED = 0.8;
     private static final double CLAW_UP = 1.0;
     private static final double CLAW_STRAIGHT = 0.7;
-    private static final double CLAW_DOWN = 0.55;
+    private static final double CLAW_DOWN = 0.60;
 
     private static final double CLAW_MID = 0.85;
 
     private static final double CLAW_FLAT = 0;
     private static final double CLAW_DIA = 0.85;
 
-    private static final double CLAW_PERP = 0.65;
+    private static final double CLAW_PERP = 0.4;
 
 
 
@@ -124,6 +124,10 @@ public class Claw implements Subsystem {
 
     public void perpPos() {
         clawRotServo.setPosition(CLAW_PERP);
+    }
+
+    public void diagPos() {
+        clawRotServo.setPosition((CLAW_FLAT+CLAW_PERP)/2);
     }
 
     public void setServoPosRot(double val) {

@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class FConstants {
     static {
-        FollowerConstants.localizers = Localizers.PINPOINT;
+        FollowerConstants.localizers = Localizers.TWO_WHEEL;
 
         FollowerConstants.leftFrontMotorName = "front_left_drive";
         FollowerConstants.leftRearMotorName = "back_left_drive";
@@ -21,6 +21,7 @@ public class FConstants {
         FollowerConstants.rightFrontMotorDirection = DcMotorSimple.Direction.REVERSE;
         FollowerConstants.rightRearMotorDirection = DcMotorSimple.Direction.REVERSE;
         FollowerConstants.mass = 9.4;
+
 
         FollowerConstants.xMovement = 82.4;
         FollowerConstants.yMovement = 68.7;
