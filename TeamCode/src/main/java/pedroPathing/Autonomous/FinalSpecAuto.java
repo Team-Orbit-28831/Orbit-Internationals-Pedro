@@ -40,8 +40,8 @@ import pedroPathing.constants.LConstants;
  * @version 2.0, 11/28/2024
  */
 
-@Autonomous(name = "Auto_Chamber_Pedro_PathOnly new lol", group = "Autonomous")
-public class NewSpecAutoP extends OpMode {
+@Autonomous(name = "Auto_Chamber_Pedro_PathOnly FINAL TRUST lol", group = "Autonomous")
+public class FinalSpecAuto extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, opmodeTimer;
@@ -65,7 +65,7 @@ public class NewSpecAutoP extends OpMode {
      * Lets assume the Robot is facing the human player and we want to score in the bucket */
 
     /** Start Pose of our robot */
-    private final Pose startPose = new Pose(10.1, convertOffset(57.6), Math.toRadians(0));
+    private final Pose startPose = new Pose(8.6, convertOffset(56.5), Math.toRadians(0));
 
     private Path scorePreload, park;
 
@@ -105,7 +105,7 @@ public class NewSpecAutoP extends OpMode {
          * Here is a explanation of the difference between Paths and PathChains <https://pedropathing.com/commonissues/pathtopathchain.html> */
 
         /* This is our scorePreload path. We are using a BezierLine, which is a straight line. */
-        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(new Pose(34.5,  convertOffset(77.7)))));
+        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(new Pose(40.4,  convertOffset(76)))));
 //        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), new Pose(22, 63, Math.toRadians(180)).getHeading());
 
 
@@ -124,34 +124,49 @@ public class NewSpecAutoP extends OpMode {
 //                .setZeroPowerAccelerationMultiplier(8.5)
 //                .build();
         grab1Ready = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point((new Pose(30, convertOffset(77.7)))), new Point(new Pose(5.4, convertOffset(20.9))), new Point(new Pose(69.7, convertOffset(39.3))), new Point(new Pose(57.5, convertOffset(27.3)))))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .addPath(
+                        new BezierLine(
+                                new Point(40.464, convertOffset(76.014), Point.CARTESIAN),
+                                new Point(30.143, convertOffset(43.577), Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(300))
+
                 .setPathEndVelocityConstraint(75)
                 .setZeroPowerAccelerationMultiplier(8.5)
                 .build();
 
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point((new Pose(57.5, convertOffset(27.3)))), new Point(new Pose(13.7, convertOffset(27.6)))))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .addPath(
+                        new BezierLine(
+                                new Point(30.143, convertOffset(43.577), Point.CARTESIAN),
+                                new Point(30.343, convertOffset(43.777), Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(300), Math.toRadians(230))
                 .setPathEndVelocityConstraint(75)
                 .setZeroPowerAccelerationMultiplier(8.5)
                 .build();
 
         grab2Ready = follower.pathBuilder()
-                .addPath(new BezierLine(new Point((new Pose(6.5, convertOffset(27.6)))), new Point(new Pose(67.4, convertOffset(25.7)))))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .addPath(
+                        new BezierLine(
+                                new Point(30.343, convertOffset(43.777), Point.CARTESIAN),
+                                new Point(31.290, convertOffset(39.154), Point.CARTESIAN)
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(300))
                 .setPathEndVelocityConstraint(75)
                 .setZeroPowerAccelerationMultiplier(8.5)
                 .build();
         grabPickup2 = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
-                                new Point(67.4, convertOffset(25.7), Point.CARTESIAN),
-                                new Point(80.9, convertOffset(14.4), Point.CARTESIAN),
-                                new Point(14.4, convertOffset(15.5), Point.CARTESIAN)
-                        )
+                new BezierLine(
+                        new Point(31.290, convertOffset(39.154), Point.CARTESIAN),
+                        new Point(31.590, convertOffset(39.654), Point.CARTESIAN)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+        )
+                .setLinearHeadingInterpolation(Math.toRadians(300), Math.toRadians(230))
                 .setPathEndVelocityConstraint(75)
                 .setZeroPowerAccelerationMultiplier(8.5)
 
@@ -159,43 +174,42 @@ public class NewSpecAutoP extends OpMode {
         grab3Ready = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(14.416, convertOffset(15.563), Point.CARTESIAN),
-                                new Point(67.918, convertOffset(10.235), Point.CARTESIAN)
+                                new Point(31.590, convertOffset(39.654), Point.CARTESIAN),
+                                new Point(32.109, convertOffset(34.403), Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(300))
                 .setPathEndVelocityConstraint(75)
                 .setZeroPowerAccelerationMultiplier(8.5)
                 .build();
         grabPickup3 = follower.pathBuilder()
                 .addPath(
-                        new BezierCurve(
-                                new Point(67.918, convertOffset(10.235), Point.CARTESIAN),
-                                new Point(67.659, convertOffset(10), Point.CARTESIAN),
-                                new Point(13.925, convertOffset(9.3), Point.CARTESIAN)
+                        new BezierLine(
+                                new Point(32.109, convertOffset(34.403), Point.CARTESIAN),
+                                new Point(32.409, convertOffset(34.703), Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(300), Math.toRadians(230))
+
                 .setPathEndVelocityConstraint(75)
                 .setZeroPowerAccelerationMultiplier(8.5)
                 .build();
         firstCollect = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(13.925, convertOffset(8.6), Point.CARTESIAN),
-
-                                new Point(11.5, convertOffset(23.5), Point.CARTESIAN)
+                                new Point(32.409, convertOffset(34.703), Point.CARTESIAN),
+                                new Point(11.631, convertOffset(34.239), Point.CARTESIAN)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(230), Math.toRadians(180))
                 .setPathEndVelocityConstraint(75)
                 .setZeroPowerAccelerationMultiplier(8.5)
                 .build();
         deposit1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Point(11.500, convertOffset(23.5), Point.CARTESIAN),
-                                new Point(36.8, convertOffset(66.5), Point.CARTESIAN)
+                                new Point(11.631, convertOffset(34.239), Point.CARTESIAN),
+                                new Point(40.300, convertOffset(79.290), Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
@@ -387,70 +401,70 @@ public class NewSpecAutoP extends OpMode {
                 break;
             case 5:
                 if (!follower.isBusy()){
-                    follower.followPath(grabPickup2);
+                    follower.followPath(grabPickup2, true);
                     setPathState(6);
                 }
                 break;
             case 6:
                 if (!follower.isBusy()){
-                    follower.followPath(grab3Ready);
+                    follower.followPath(grab3Ready, true);
                     setPathState(7);
                 }
                 break;
             case 7:
                 if (!follower.isBusy()) {
-                    follower.followPath(grabPickup3);
+                    follower.followPath(grabPickup3, true);
                     setPathState(8);
                 }
                 break;
             case 8:
                 if (!follower.isBusy()){
-                    follower.followPath(firstCollect);
+                    follower.followPath(firstCollect, true);
                     setPathState(9);
                 }
                 break;
             case 9:
                 if (!follower.isBusy()) {
-                    follower.followPath(collect1);
+                    follower.followPath(collect1, true);
                     setPathState(10);
                 }
                 break;
             case 10:
                 if (!follower.isBusy()) {
-                    follower.followPath(deposit1);
-                    setPathState(11);
+                    follower.followPath(deposit1, true);
+                    setPathState(100);
                 }
                 break;
-            case 11:
-                if (!follower.isBusy()) {
-                    follower.followPath(collect2);
-                    setPathState(12);
-                }
-                break;
-            case 12:
-                if (!follower.isBusy()) {
-                    follower.followPath(deposit2);
-                    setPathState(13);
-                }
-                break;
-            case 13:
-                if (!follower.isBusy()) {
-                    follower.followPath(collect3);
-                    setPathState(14);
-                }
-                break;
-            case 14:
-                if (!follower.isBusy()) {
-                    follower.followPath(deposit3);
-                    setPathState(15);
-                }
-                break;
-            case 15:
-                if (!follower.isBusy()) {
-                    follower.followPath(collect4);
-                    setPathState(16);
-                }
-                break;
+//            case 11:
+//                if (!follower.isBusy()) {
+//                    follower.followPath(collect2);
+//                    setPathState(12);
+//                }
+//                break;
+//            case 12:
+//                if (!follower.isBusy()) {
+//                    follower.followPath(deposit2);
+//                    setPathState(13);
+//                }
+//                break;
+//            case 13:
+//                if (!follower.isBusy()) {
+//                    follower.followPath(collect3);
+//                    setPathState(14);
+//                }
+//                break;
+//            case 14:
+//                if (!follower.isBusy()) {
+//                    follower.followPath(deposit3);
+//                    setPathState(15);
+//                }
+//                break;
+//            case 15:
+//                if (!follower.isBusy()) {
+//                    follower.followPath(collect4);
+//                    setPathState(16);
+//                }
+//                break;
             case 16:
                 if (!follower.isBusy()) {
                     follower.followPath(deposit4);
@@ -540,7 +554,7 @@ public class NewSpecAutoP extends OpMode {
 //         These loop the movements of the robot
 
         follower.update();
-        follower.setMaxPower(1);
+        follower.setMaxPower(0.5);
         autonomousPathUpdate();
 
         CommandScheduler.getInstance().run();

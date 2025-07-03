@@ -1,5 +1,7 @@
 package pedroPathing.TeleOP;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 //import com.pedropathing.follower.Follower;
 //import com.pedropathing.localization.Pose;
@@ -10,6 +12,7 @@ import pedroPathing.SUBSYSTEMS.CascadeSlides;
 import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.Claw;
 import pedroPathing.SUBSYSTEMS.Vision;
+import pedroPathing.commands.CascadeSpecDep;
 import pedroPathing.commands.ClawClose;
 //import pedroPathing.commands.ClawDiagonal;
 import pedroPathing.commands.ClawDown;
@@ -24,6 +27,7 @@ import pedroPathing.commands.CollectSub;
 //import pedroPathing.commands.SampleAutoAlign;
 import pedroPathing.commands.MidClaw;
 import pedroPathing.commands.PivotBask;
+import pedroPathing.commands.PivotResetEncoder;
 import pedroPathing.commands.PivotSampleLong;
 import pedroPathing.commands.PivotNormal;
 import pedroPathing.commands.PivotSampleShort;
@@ -33,6 +37,7 @@ import pedroPathing.commands.PivotSpecDrop;
 import pedroPathing.commands.SlideRetract;
 import pedroPathing.commands.SlideSampleLong;
 import pedroPathing.commands.SlidesHighBask;
+import pedroPathing.commands.SlidesResetEncoders;
 import pedroPathing.commands.SlidesSampleShort;
 import pedroPathing.commands.VisionSlides;
 import pedroPathing.commands.m_pivotdown;
@@ -44,6 +49,8 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp(name = "Internationals TeleOp Main", group = "Linear OpMode")
 public class Internationals_TeleOP extends LinearOpMode {
@@ -123,9 +130,9 @@ public class Internationals_TeleOP extends LinearOpMode {
                 drivetrain.bDrive(gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x,1);
             }
 
-            if (gamepad2.right_trigger>0.1) {
-                claw.diagPos();
-            }
+//            if (gamepad2.right_trigger>0.1) {
+//                claw.diagPos();
+//            }
 
             CommandScheduler.getInstance().run();
 
@@ -158,7 +165,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             // short sample collection
 
 
-            driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
+            driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                     new SequentialCommandGroup(
                             new ClawOpen(claw),
                             new WaitCommand(100),
@@ -186,7 +193,6 @@ public class Internationals_TeleOP extends LinearOpMode {
                             new PivotSpecDrop(cascadePivot),
 //                            new WaitCommand(100),
                             new ClawUp(claw)
-
 
 
 
@@ -337,14 +343,14 @@ public class Internationals_TeleOP extends LinearOpMode {
             );
 
             // Collect Spec
-            driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-                    new SequentialCommandGroup(
-                        new ClawOpen(claw),
-                        new ClawFlat(claw),
-                        new ClawStraight(claw),
-                        new PivotNormal(cascadePivot)
-                   )
-            );
+//            driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+//                    new SequentialCommandGroup(
+//                        new ClawOpen(claw),
+//                        new ClawFlat(claw),
+//                        new ClawStraight(claw),
+//                        new PivotNormal(cascadePivot)
+//                   )
+//            );
 
             // moves slide up and down manually
             operator.getGamepadButton(GamepadKeys.Button.X).whileHeld(
@@ -372,11 +378,22 @@ public class Internationals_TeleOP extends LinearOpMode {
                     new ClawPerp(claw)
             );
 
+            driver.getGamepadButton(GamepadKeys.Button.START).whenPressed(
+                    new ParallelCommandGroup(
+                            new InstantCommand(() -> {telemetry.addLine("reset encoders");}),
+                            new SlidesResetEncoders(cascadeSlides),
+                            new PivotResetEncoder(cascadePivot)
+                    )
+            );
+
             operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                     new SequentialCommandGroup(
-                        new ClawDown(claw),
-                        new WaitCommand(500),
-                        new PivotSpecDone(cascadePivot)
+//                            new ParallelCommandGroup(
+//                            ),
+                            new CascadeSpecDep(cascadeSlides)
+//                            new WaitCommand(1000),
+//                        new ClawDown(claw)
+//                        new PivotSpecDone(cascadePivot)
                 )
             );
 

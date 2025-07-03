@@ -27,7 +27,7 @@ public class VisionSlides extends CommandBase {
             target = 700;
         }
 
-        cascadeSlidesE.setSlideTarget((int)Math.round(target+110));
+        cascadeSlidesE.setSlideTarget((int)Math.round(target+140));
 
 
 

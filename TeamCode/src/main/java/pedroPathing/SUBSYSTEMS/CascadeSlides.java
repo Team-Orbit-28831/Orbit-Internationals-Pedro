@@ -19,7 +19,7 @@ public class CascadeSlides implements Subsystem {
     private static final int SLIDES_LOW_CHAMBER = 0;
     private static final int SLIDES_HIGH_CHAMBER = 250;
     private static final int SLIDES_LOW_BASKET = 215;
-    private static final int SLIDES_HIGH_BASKET = 790;
+    private static final int SLIDES_HIGH_BASKET = 790; // change back to 790
 
     private static final int SLIDES_SUB = 550;
 
@@ -38,7 +38,7 @@ public class CascadeSlides implements Subsystem {
     public CascadeSlides(HardwareMap hardwareMap, Telemetry telemetry) {
         slideMotor = hardwareMap.get(DcMotorEx.class, "cascade");
         slideMotor.setDirection(DcMotorEx.Direction.REVERSE);
-        slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 //        slideMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
@@ -61,6 +61,14 @@ public class CascadeSlides implements Subsystem {
 
     }
 
+    public void specDep() {
+//        setSlideTarget(SLIDES_LOW_BASKET);
+        slideMotor.setTargetPosition(250);
+        slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        slideMotor.setPower(0.9);
+
+    }
+
     public void slideHighBasket() {
         slideMotor.setTargetPosition(SLIDES_HIGH_BASKET);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -74,7 +82,7 @@ public class CascadeSlides implements Subsystem {
     }
 
     public void slideSubLong() {
-        slideMotor.setTargetPosition(SLIDES_HIGH_BASKET);
+        slideMotor.setTargetPosition(630);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         slideMotor.setPower(0.7);
     }
@@ -95,6 +103,9 @@ public class CascadeSlides implements Subsystem {
         slideMotor.setTargetPosition(SLIDES_LOW_CHAMBER);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         slideMotor.setPower(0.7);
+    }
+    public void resetEncoders(){
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     private static Telemetry telemetry;

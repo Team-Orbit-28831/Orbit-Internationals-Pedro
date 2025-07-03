@@ -16,12 +16,12 @@ public class CascadePivot implements Subsystem {
     public DcMotorEx pivotMotorLeft;   // vertical
     public DcMotorEx pivotMotorRight;  // extension
 
-    public int baskHeight = -3301;
-    public int normalHeight = -731;
+    public int baskHeight = -3151;
+    public int normalHeight = -701;
 
     public int collectionHeight = -481;
 
-    public int specDepositHeight = -2999;
+    public int specDepositHeight = -3099;
 
     public int longNormalHeight = -821;
     public int specHeight = -1691;
@@ -52,8 +52,8 @@ public class CascadePivot implements Subsystem {
         pivotMotorLeft.setDirection(DcMotorEx.Direction.FORWARD);
         pivotMotorRight.setDirection(DcMotorEx.Direction.FORWARD);
 
-        pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
 //        pivotMotorLeft.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 //        pivotMotorRight.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
