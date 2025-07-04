@@ -472,6 +472,7 @@ public class Internationals_TeleOP extends LinearOpMode {
             telemetry.addData("Target Visible", vision.isTargetVisible());
             telemetry.addData("Tx (deg)", vision.getTx(0));
             telemetry.addData("Ty (deg)", vision.getTy(0));
+            telemetry.addData("StrafeOffset", (vision.getStrafeOffset()));
 
             telemetry.addData("Detector Results", vision.getDetections());
             telemetry.addData("Orientation", vision.getOrientationFlag());
