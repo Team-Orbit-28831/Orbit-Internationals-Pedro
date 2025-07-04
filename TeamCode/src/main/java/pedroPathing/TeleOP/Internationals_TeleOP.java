@@ -49,6 +49,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -134,6 +135,19 @@ public class Internationals_TeleOP extends LinearOpMode {
 //                claw.diagPos();
 //            }
 
+            driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(
+                    new InstantCommand(() -> {
+                        int slidespos;
+                        slidespos = cascadeSlides.getCurrentPosition();
+
+                        int pivotpos;
+                        pivotpos = cascadePivot.getAveragePosition();
+
+                        cascadeSlides.setSlideTarget(slidespos);
+                        cascadePivot.setPivotTarget(pivotpos);
+                    })
+            );
+
             CommandScheduler.getInstance().run();
 
 //
@@ -206,6 +220,7 @@ public class Internationals_TeleOP extends LinearOpMode {
 
                             new ClawOpen(claw),
                             new ClawFlat(claw),
+                            new SlideRetract(cascadeSlides),
                             new PivotSpecCollect(cascadePivot),
 //                            new WaitCommand(100),
                             new MidClaw(claw)

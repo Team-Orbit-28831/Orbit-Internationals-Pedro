@@ -63,9 +63,9 @@ public class CascadeSlides implements Subsystem {
 
     public void specDep() {
 //        setSlideTarget(SLIDES_LOW_BASKET);
-        slideMotor.setTargetPosition(250);
+        slideMotor.setTargetPosition(300);
         slideMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.9);
+        slideMotor.setPower(1);
 
     }
 

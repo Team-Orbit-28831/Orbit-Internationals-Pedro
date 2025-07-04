@@ -124,21 +124,21 @@ public class NewSpecAutoP extends OpMode {
 //                .setZeroPowerAccelerationMultiplier(8.5)
 //                .build();
         grab1Ready = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point((new Pose(30, convertOffset(77.7)))), new Point(new Pose(5.4, convertOffset(20.9))), new Point(new Pose(69.7, convertOffset(39.3))), new Point(new Pose(57.5, convertOffset(27.3)))))
+                .addPath(new BezierCurve(new Point((new Pose(30, convertOffset(77.7)))), new Point(new Pose(5.4, convertOffset(20.9))), new Point(new Pose(69.7, convertOffset(39.3))), new Point(new Pose(52.5, convertOffset(27.3)))))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .setPathEndVelocityConstraint(75)
                 .setZeroPowerAccelerationMultiplier(8.5)
                 .build();
 
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point((new Pose(57.5, convertOffset(27.3)))), new Point(new Pose(13.7, convertOffset(27.6)))))
+                .addPath(new BezierLine(new Point((new Pose(52.5, convertOffset(27.3)))), new Point(new Pose(13.7, convertOffset(27.6)))))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .setPathEndVelocityConstraint(75)
                 .setZeroPowerAccelerationMultiplier(8.5)
                 .build();
 
         grab2Ready = follower.pathBuilder()
-                .addPath(new BezierLine(new Point((new Pose(6.5, convertOffset(27.6)))), new Point(new Pose(67.4, convertOffset(25.7)))))
+                .addPath(new BezierLine(new Point((new Pose(6.5, convertOffset(27.6)))), new Point(new Pose(63.4, convertOffset(25.7)))))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .setPathEndVelocityConstraint(75)
                 .setZeroPowerAccelerationMultiplier(8.5)
@@ -146,7 +146,7 @@ public class NewSpecAutoP extends OpMode {
         grabPickup2 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(67.4, convertOffset(25.7), Point.CARTESIAN),
+                                new Point(63.4, convertOffset(25.7), Point.CARTESIAN),
                                 new Point(80.9, convertOffset(14.4), Point.CARTESIAN),
                                 new Point(14.4, convertOffset(15.5), Point.CARTESIAN)
                         )
@@ -160,7 +160,7 @@ public class NewSpecAutoP extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Point(14.416, convertOffset(15.563), Point.CARTESIAN),
-                                new Point(67.918, convertOffset(10.235), Point.CARTESIAN)
+                                new Point(63.918, convertOffset(10.235), Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -170,7 +170,7 @@ public class NewSpecAutoP extends OpMode {
         grabPickup3 = follower.pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Point(67.918, convertOffset(10.235), Point.CARTESIAN),
+                                new Point(63.918, convertOffset(10.235), Point.CARTESIAN),
                                 new Point(67.659, convertOffset(10), Point.CARTESIAN),
                                 new Point(13.925, convertOffset(9.3), Point.CARTESIAN)
                         )
@@ -388,7 +388,7 @@ public class NewSpecAutoP extends OpMode {
             case 5:
                 if (!follower.isBusy()){
                     follower.followPath(grabPickup2);
-                    setPathState(6);
+                    setPathState(100);
                 }
                 break;
             case 6:

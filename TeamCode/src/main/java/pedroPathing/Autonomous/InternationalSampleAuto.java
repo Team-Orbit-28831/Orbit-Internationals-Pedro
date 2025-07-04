@@ -1,5 +1,9 @@
 package pedroPathing.Autonomous;
 
+
+
+import static java.lang.Thread.sleep;
+
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -19,6 +23,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import pedroPathing.SUBSYSTEMS.CascadePivot;
 import pedroPathing.SUBSYSTEMS.CascadeSlides;
 import pedroPathing.SUBSYSTEMS.Claw;
+import pedroPathing.SUBSYSTEMS.Vision;
 import pedroPathing.commands.ClawClose;
 import pedroPathing.commands.ClawDown;
 import pedroPathing.commands.ClawFlat;
@@ -45,6 +50,7 @@ public class InternationalSampleAuto extends OpMode {
 
     private Claw claw;
 
+    private Vision vision;
     private SequentialCommandGroup dropSample, collect1S, collect2S, collect3S, dropClaw;
 
 
@@ -66,6 +72,7 @@ public class InternationalSampleAuto extends OpMode {
         cascadeSlides = new CascadeSlides(hardwareMap, telemetry);
         claw = new Claw(hardwareMap);
 
+
         Constants.setConstants(FConstants.class, LConstants.class);
 
         follower = new Follower(hardwareMap);
@@ -81,7 +88,7 @@ public class InternationalSampleAuto extends OpMode {
         line1 = follower.pathBuilder()
                 .addPath(new BezierLine(
                         new Point(9.173, convertOffset(110.942), Point.CARTESIAN),
-                        new Point(11.596153846153847, convertOffset(127.38461538461539), Point.CARTESIAN)
+                        new Point(13, convertOffset(127.38461538461539), Point.CARTESIAN)
                 ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-35))
                 .build();
@@ -89,35 +96,35 @@ public class InternationalSampleAuto extends OpMode {
         // Line 2: Move to first sample
         line2 = follower.pathBuilder()
                 .addPath(new BezierLine(
-                        new Point(11.596153846153847, convertOffset(127.38461538461539), Point.CARTESIAN),
-                        new Point(26.827, convertOffset(118.115), Point.CARTESIAN)
+                        new Point(13, convertOffset(127.38461538461539), Point.CARTESIAN),
+                        new Point(26.827, convertOffset(117.5), Point.CARTESIAN)
                 ))
-                .setLinearHeadingInterpolation(Math.toRadians(-35), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-35), Math.toRadians(10))
                 .build();
 
         // Line 3: Return to rotation point
         line3 = follower.pathBuilder()
                 .addPath(new BezierLine(
-                        new Point(26.827, convertOffset(118.115), Point.CARTESIAN),
-                        new Point(11.596153846153847, convertOffset(127.38461538461539), Point.CARTESIAN)
+                        new Point(26.827, convertOffset(117.5), Point.CARTESIAN),
+                        new Point(13, convertOffset(127.38461538461539), Point.CARTESIAN)
                 ))
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-35))
+                .setLinearHeadingInterpolation(Math.toRadians(10), Math.toRadians(-35))
                 .build();
 
         // Line 4: Move to second sample
         line4 = follower.pathBuilder()
                 .addPath(new BezierLine(
-                        new Point(11.596153846153847, convertOffset(127.38461538461539), Point.CARTESIAN),
-                        new Point(26.654, convertOffset(127.246), Point.CARTESIAN)
+                        new Point(13, convertOffset(127.38461538461539), Point.CARTESIAN),
+                        new Point(26.654, convertOffset(126.846), Point.CARTESIAN)
                 ))
-                .setLinearHeadingInterpolation(Math.toRadians(-35), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-35), Math.toRadians(2))
                 .build();
 
         // Line 5: Return to rotation point
         line5 = follower.pathBuilder()
                 .addPath(new BezierLine(
-                        new Point(26.654, convertOffset(127.246), Point.CARTESIAN),
-                        new Point(11.596153846153847, convertOffset(127.38461538461539), Point.CARTESIAN)
+                        new Point(26.654, convertOffset(126.846), Point.CARTESIAN),
+                        new Point(13, convertOffset(127.38461538461539), Point.CARTESIAN)
                 ))
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-35))
                 .build();
@@ -125,10 +132,10 @@ public class InternationalSampleAuto extends OpMode {
         // Line 6: Move to third sample
         line6 = follower.pathBuilder()
                 .addPath(new BezierLine(
-                        new Point(11.596153846153847, convertOffset(127.38461538461539), Point.CARTESIAN),
-                        new Point(26.827, convertOffset(125.38461538461539), Point.CARTESIAN)
+                        new Point(13, convertOffset(127.38461538461539), Point.CARTESIAN),
+                        new Point(18.865, convertOffset(131.712), Point.CARTESIAN)
                 ))
-                .setLinearHeadingInterpolation(Math.toRadians(-35), Math.toRadians(62))
+                .setLinearHeadingInterpolation(Math.toRadians(-35), Math.toRadians(25))
                 .build();
     }
 
@@ -138,8 +145,8 @@ public class InternationalSampleAuto extends OpMode {
                 // Follow first path to rotation point
                 follower.followPath(line1);
                 SequentialCommandGroup command1 = new SequentialCommandGroup(
-                        new ClawDown(claw),
-                        new ClawClose(claw),
+                        new InstantCommand(() -> claw.downClaw()),
+                        new InstantCommand(() -> claw.closeClaw()),
                         new PivotBask(cascadePivot),
                         new SlidesHighBask(cascadeSlides)
                 );
@@ -154,11 +161,11 @@ public class InternationalSampleAuto extends OpMode {
                     SequentialCommandGroup command2 = new SequentialCommandGroup(
                             new PivotBask(cascadePivot),
                             new SlidesHighBask(cascadeSlides),
-                            new ClawUp(claw),
+                            new InstantCommand(() -> claw.upClaw()),
+                            new WaitCommand(300),
+                            new InstantCommand(() -> claw.openClaw()),
                             new WaitCommand(500),
-                            new ClawOpen(claw),
-                            new WaitCommand(500),
-                            new ClawDown(claw),
+                            new InstantCommand(() -> claw.downClaw()),
                             new PivotNormal(cascadePivot),
                             new InstantCommand(() -> {
                                 cascadeSlides.setSlideTarget(300);
@@ -182,7 +189,7 @@ public class InternationalSampleAuto extends OpMode {
                     );
                     CommandScheduler.getInstance().schedule(command3);
 
-                    if (pathTimer.getElapsedTimeSeconds() > 3) {
+                    if (pathTimer.getElapsedTimeSeconds() > 4) {
                         claw.closeClaw();
                         follower.followPath(line3);
                         setPathState(3);
@@ -196,18 +203,19 @@ public class InternationalSampleAuto extends OpMode {
                     SequentialCommandGroup command4 = new SequentialCommandGroup(
                             new PivotBask(cascadePivot),
                             new SlidesHighBask(cascadeSlides),
-                            new ClawUp(claw),
-                            new WaitCommand(300),
-                            new ClawOpen(claw),
+                            new InstantCommand(() -> claw.upClaw()),
+                            new WaitCommand(200),
+                            new InstantCommand(() -> claw.openClaw()),
                             new WaitCommand(500),
-                            new ClawDown(claw),
+                            new InstantCommand(() -> claw.downClaw()),
                             new PivotNormal(cascadePivot),
                             new InstantCommand(() -> {
-                                cascadeSlides.setSlideTarget(300);
+                                cascadeSlides.setSlideTarget(310);
                             })
                     );
                     CommandScheduler.getInstance().schedule(command4);
-                    if (pathTimer.getElapsedTimeSeconds() > 3) {
+
+                    if (pathTimer.getElapsedTimeSeconds() > 3.5) {
                         follower.followPath(line4, true);
                         setPathState(4);
                     }
@@ -217,13 +225,13 @@ public class InternationalSampleAuto extends OpMode {
             case 4:
                 // Wait for line4 to complete, then follow line5 (return to rotation point)
                 if (!follower.isBusy()) {
-                    SequentialCommandGroup command3 = new SequentialCommandGroup(
+                    SequentialCommandGroup command5 = new SequentialCommandGroup(
                             new CollectSub(claw, cascadePivot),
                             new WaitCommand(100)
                     );
-                    CommandScheduler.getInstance().schedule(command3);
+                    CommandScheduler.getInstance().schedule(command5);
 
-                    if (pathTimer.getElapsedTimeSeconds() > 3) {
+                    if (pathTimer.getElapsedTimeSeconds() > 4) {
                         claw.closeClaw();
                         follower.followPath(line5);
                         setPathState(5);
@@ -234,67 +242,75 @@ public class InternationalSampleAuto extends OpMode {
             case 5:
                 // Wait for line5 to complete, then follow line6 (to third sample)
                 if (!follower.isBusy()) {
-                    SequentialCommandGroup command4 = new SequentialCommandGroup(
+                    SequentialCommandGroup command6 = new SequentialCommandGroup(
                             new PivotBask(cascadePivot),
                             new SlidesHighBask(cascadeSlides),
-                            new ClawUp(claw),
-                            new WaitCommand(300),
-                            new ClawOpen(claw),
+                            new InstantCommand(() -> claw.upClaw()),
+                            new WaitCommand(200),
+                            new InstantCommand(() -> claw.openClaw()),
                             new WaitCommand(500),
-                            new ClawDown(claw),
+                            new InstantCommand(() -> claw.downClaw()),
                             new PivotNormal(cascadePivot),
                             new InstantCommand(() -> {
-                                cascadeSlides.setSlideTarget(460);
+                                cascadeSlides.setSlideTarget(580);
                             })
                     );
-                    CommandScheduler.getInstance().schedule(command4);
-                    if (pathTimer.getElapsedTimeSeconds() > 4) {
+                    CommandScheduler.getInstance().schedule(command6);
+
+                    if (pathTimer.getElapsedTimeSeconds() > 4.5) {
                         follower.followPath(line6, true);
                         setPathState(6);
                     }
                 }
                 break;
 
+
             case 6:
+                // Wait for line6 to complete, then follow line5 (return to rotation point)
                 if (!follower.isBusy()) {
-                    SequentialCommandGroup command3 = new SequentialCommandGroup(
-//                            new ClawPerp(claw),
+                    SequentialCommandGroup command7 = new SequentialCommandGroup(
                             new CollectSub(claw, cascadePivot),
                             new WaitCommand(100)
                     );
-                    CommandScheduler.getInstance().schedule(command3);
+                    CommandScheduler.getInstance().schedule(command7);
 
-
-                    if (pathTimer.getElapsedTimeSeconds() > 3.5) {
+                    if (pathTimer.getElapsedTimeSeconds() > 4) {
                         claw.closeClaw();
                         follower.followPath(line5);
                         setPathState(7);
                     }
                 }
                 break;
-            case 7:
-                if (!follower.isBusy()) {
-                    SequentialCommandGroup command4 = new SequentialCommandGroup(
 
+            case 7:
+                // Final drop sequence
+                if (!follower.isBusy()) {
+                    SequentialCommandGroup command8 = new SequentialCommandGroup(
                             new PivotBask(cascadePivot),
                             new SlidesHighBask(cascadeSlides),
-                            new ClawUp(claw),
+                            new InstantCommand(() -> claw.upClaw()),
                             new ClawFlat(claw),
                             new WaitCommand(300),
-                            new ClawOpen(claw),
+                            new InstantCommand(() -> claw.openClaw()),
                             new WaitCommand(500),
-                            new ClawDown(claw),
+                            new InstantCommand(() -> claw.downClaw()),
                             new PivotNormal(cascadePivot),
                             new InstantCommand(() -> {
                                 cascadeSlides.setSlideTarget(0);
                             })
                     );
-                    CommandScheduler.getInstance().schedule(command4);
-                    if (pathTimer.getElapsedTimeSeconds() > 4) {
-                        claw.upClaw();
+                    CommandScheduler.getInstance().schedule(command8);
 
-                        claw.openClaw();
-                        break;
+                    if (pathTimer.getElapsedTimeSeconds() > 4) {
+                        // Final state - autonomous complete
+                        SequentialCommandGroup command9 = new SequentialCommandGroup(
+                                new ClawUp(claw),
+                                new WaitCommand(100),
+                                new ClawOpen(claw)
+                        );
+
+                        CommandScheduler.getInstance().schedule(command9);
+
                     }
                 }
                 break;
@@ -312,7 +328,9 @@ public class InternationalSampleAuto extends OpMode {
         // Update Pedro Pathing
         follower.update();
 
+
         // Run autonomous state machine
+
         autonomousPathUpdate();
         CommandScheduler.getInstance().run();
 

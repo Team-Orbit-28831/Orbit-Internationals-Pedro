@@ -329,7 +329,7 @@ public class SpecAuto extends OpMode {
 
         slideMotor = hardwareMap.get(DcMotorEx.class, "cascade");
         slideMotor.setDirection(DcMotorEx.Direction.REVERSE);
-        slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        slideMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         slideMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         pivotMotorLeft = hardwareMap.get(DcMotorEx.class, "pivotLeft");
@@ -338,8 +338,8 @@ public class SpecAuto extends OpMode {
         pivotMotorLeft.setDirection(DcMotorEx.Direction.REVERSE);
         pivotMotorRight.setDirection(DcMotorEx.Direction.REVERSE);
 
-        pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        pivotMotorLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+//        pivotMotorRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
 
         pivotMotorLeft.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
