@@ -121,7 +121,7 @@ public class NewAuto extends OpMode {
                         new BezierCurve(
                                 new Point(134.615, 57.103, Point.CARTESIAN),
                                 new Point(105.708, 39.547, Point.CARTESIAN),
-                                new Point(128.05326354679804, 18.620689655172413, Point.CARTESIAN)
+                                new Point(128.053, 18.621, Point.CARTESIAN)
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-225))
